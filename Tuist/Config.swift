@@ -5,3 +5,5 @@ let config = Config(
         .local(path: .relativeToManifest("../../Plugins/OhYeah")),
     ]
 )
+
+let organizationName = "com.bongzniak"
