@@ -2,7 +2,7 @@
 단어 암기 앱
 
 ## 기술 스펙
-* Tuist + ReactorKit + Snapkit
+* Tuist + ReactorKit + Snapkit + CoreData
 * iCloud 동기화?
 
 ## 영어 단어 암기
