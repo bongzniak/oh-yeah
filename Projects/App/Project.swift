@@ -17,5 +17,8 @@ let project = Project.app(
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
     infoPlist: infoPlistPath,
-    dependencies: []
+    dependencies: [
+        .project(target: "Splash", path: .relativeToRoot("Projects/Feature/Splash")),
+        .project(target: "Logger", path: .relativeToRoot("Projects/Core/Logger"))
+    ]
 )

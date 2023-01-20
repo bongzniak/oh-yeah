@@ -8,12 +8,15 @@
 
 import Foundation
 import UIKit
+
 //import Firebase
-//import KakaoSDKCommon
-//import KakaoSDKAuth
-//import KakaoSDKUser
-//import Amplitude
 //import AdSupport
+
+import Common
+
+import Splash
+import Logger
+
 
 struct AppDependency {
     typealias OpenURLHandler = (_ url: URL) -> Bool
@@ -56,24 +59,19 @@ final class CompositionRoot {
         window.backgroundColor = .white
         window.makeKeyAndVisible()
 
-        let presentLoginScreen: (() -> Void) = {
-            window.rootViewController = UIViewController()
-        }
+//        let presentLoginScreen: (() -> Void) = {
+//
+//        }
         
-        let presentMainScreen: (() -> Void) = {
-            let tabBarViewController = UITabBarController()
-            tabBarViewController.viewControllers = [
-                UIViewController()
-            ]
-            UINavigationBar.appearance().tintColor = .black
-            window.rootViewController = tabBarViewController
-        }
+//        let presentMainScreen: (() -> Void) = {
+//
+//        }
         
-        window.rootViewController = UIViewController()
-//        SplashViewController.instance(
-//            presentLoginScreen: presentLoginScreen,
-//            presentMainScreen: presentMainScreen
-//        )
+        let navigationController: UINavigationController = BaseNavigationController()
+        window.rootViewController = navigationController
+        
+        let splashCoordinator = SplashCoordinator(navigationController: navigationController)
+        splashCoordinator.start()
 
         return AppDependency(
             window: window,
@@ -129,7 +127,7 @@ final class CompositionRoot {
 
     static func openURL() -> AppDependency.OpenURLHandler {
         { url -> Bool in
-            // logger.debug("url >> ", url)
+            logger.debug("url >> ", url)
             return true
         }
     }
@@ -153,7 +151,7 @@ extension CompositionRoot {
         _ userInfo: [AnyHashable : Any],
         _ completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        // logger.debug("didReceiveRemoteNotification userInfo >> ", userInfo)
+        logger.debug("didReceiveRemoteNotification userInfo >> ", userInfo)
 
         guard let userInfo = userInfo as? [String: AnyObject] else {
             return
@@ -168,7 +166,7 @@ extension CompositionRoot {
         guard let userInfo = notification.request.content.userInfo as? [String: AnyObject] else {
             return
         }
-        // logger.debug("userNotificationCenterWillPresent userInfo >> ", userInfo)
+        logger.debug("userNotificationCenterWillPresent userInfo >> ", userInfo)
         
         if #available(iOS 14.0, *) {
             completionHandler([[.sound, .banner]])
@@ -185,7 +183,7 @@ extension CompositionRoot {
     ) {
         guard let userInfo = response.notification.request.content.userInfo as? [String: AnyObject]
         else { return }
-        // logger.debug("userNotificationCenterDidReceive userInfo\(userInfo)")
+        logger.debug("userNotificationCenterDidReceive userInfo\(userInfo)")
         completionHandler()
     }
 

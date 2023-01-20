@@ -9,5 +9,10 @@ import ProjectDescription
 
 let workspace = Workspace(
     name: "oh-yeah",
-    projects: ["Projects/*", "Dependencies/*"]
+    projects: [
+        "Projects/App",
+        "Projects/Feature/*",
+        "Projects/Core/*",
+        "Projects/UI/*"
+    ]
 )
