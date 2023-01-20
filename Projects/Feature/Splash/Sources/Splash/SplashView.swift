@@ -34,6 +34,10 @@ final class SplashView: BaseView {
     
     // MARK: Properties
     
+    let titleLabel: UILabel = UILabel().then {
+        $0.text = "title"
+    }
+    
     // MARK: Initializing
     
     override init() {
