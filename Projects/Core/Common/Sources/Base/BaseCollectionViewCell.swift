@@ -12,15 +12,14 @@ import RxSwift
 
 open class BaseCollectionViewCell: UICollectionViewCell {
 
-
-    var disposeBag = DisposeBag()
+    // MARK: Properties
+    
+    public var disposeBag = DisposeBag()
 
     // MARK: Initializing
 
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: .zero)
-
-        translatesAutoresizingMaskIntoConstraints = false
 
         self.addViews()
         self.setupViews()
@@ -34,13 +33,13 @@ open class BaseCollectionViewCell: UICollectionViewCell {
     deinit {
         logger.verbose("DEINIT: \(String(describing: type(of: self)))")
     }
-
+    
     open override func prepareForReuse() {
         super.prepareForReuse()
 
         disposeBag = DisposeBag()
     }
-
+    
     // MARK: UI Setup
 
     open func addViews() {

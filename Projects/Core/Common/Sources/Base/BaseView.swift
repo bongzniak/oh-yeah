@@ -14,7 +14,7 @@ import RxSwift
 
 open class BaseView: UIView {
     
-    var disposeBag = DisposeBag()
+    public var disposeBag = DisposeBag()
 
     // MARK: Properties
 
