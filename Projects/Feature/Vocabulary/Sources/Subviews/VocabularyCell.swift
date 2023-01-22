@@ -22,7 +22,7 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     typealias Reactor = VocabularyCellReactor
     
     private enum Metric {
-        static let height: CGFloat = 100
+        static let height: CGFloat = 90
     }
     
     private enum Color {
