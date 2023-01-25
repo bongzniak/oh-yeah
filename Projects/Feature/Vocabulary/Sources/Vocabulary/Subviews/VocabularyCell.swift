@@ -16,6 +16,7 @@ import Then
 import Reusable
 
 import Common
+import Utility
 
 final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
