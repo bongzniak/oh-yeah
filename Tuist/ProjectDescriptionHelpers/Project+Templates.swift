@@ -42,6 +42,7 @@ extension Project {
             name: name,
             platform: platform,
             iOSTargetVersion: iOSTargetVersion,
+            infoPlist: infoPlist,
             dependencies: dependencies
         )
         targets.append(
@@ -61,12 +62,14 @@ extension Project {
         name: String,
         platform: Platform,
         iOSTargetVersion: String,
+        infoPlist: [String: InfoPlist.Value] = [:],
         dependencies: [TargetDependency] = []
     ) -> Project {
         let targets = makeFrameworkTargets(
             name: name,
             platform: platform,
             iOSTargetVersion: iOSTargetVersion,
+            infoPlist: infoPlist,
             dependencies: dependencies
         )
         return Project(name: name, organizationName: organizationName, targets: targets)
@@ -79,6 +82,7 @@ private extension Project {
         name: String,
         platform: Platform,
         iOSTargetVersion: String,
+        infoPlist: [String: InfoPlist.Value]? = nil,
         dependencies: [TargetDependency] = []
     ) -> [Target] {
         let sources = Target(
@@ -87,7 +91,7 @@ private extension Project {
             product: .framework,
             bundleId: "\(organizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
-            infoPlist: .default,
+            infoPlist: infoPlist == nil ? .default : .extendingDefault(with: infoPlist!),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: dependencies
