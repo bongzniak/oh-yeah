@@ -24,6 +24,7 @@ let project = Project.frameworkWithDemoApp(
     dependencies: [
         .project(target: "Common", path: .relativeToRoot("Projects/Core/Common")),
         .project(target: "Utility", path: .relativeToRoot("Projects/Core/Utility")),
+        .project(target: "DesignSystem", path: .relativeToRoot("Projects/UI/DesignSystem")),
         .external(name: "ReactorKit"),
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),
