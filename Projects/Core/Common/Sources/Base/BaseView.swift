@@ -33,7 +33,7 @@ open class BaseView: UIView {
     }
 
     deinit {
-        // logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
     }
 
     open func addViews() {
