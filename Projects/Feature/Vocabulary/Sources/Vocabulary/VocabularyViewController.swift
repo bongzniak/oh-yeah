@@ -90,17 +90,15 @@ final class VocabularyViewController: BaseViewController, View {
         reactor.state.map {
                 $0.sections
             }
-            .subscribe(onNext: { [weak self] sections in
-                self?.bodyView.sections.accept(sections)
-            })
+            .asDriver(onErrorJustReturn: [])
+            .drive(with: self) { owner, sections in
+                owner.bodyView.sections.accept(sections)
+            }
             .disposed(by: disposeBag)
             
-        reactor.state.map {
-                $0.isRefreshing
-            }
-            .distinctUntilChanged()
+        reactor.pulse(\.$isRefreshing)
             .asDriver(onErrorJustReturn: false)
-            .drive(self.bodyView.refreshControl.rx.isRefreshing)
+            .drive(bodyView.refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
     }
 }

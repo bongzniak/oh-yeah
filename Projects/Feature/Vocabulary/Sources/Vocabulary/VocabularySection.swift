@@ -31,5 +31,5 @@ extension VocabularySection: SectionModelType {
 }
 
 enum VocabularySectionItem {
-    case voca
+    case voca(VocabularyCellReactor)
 }

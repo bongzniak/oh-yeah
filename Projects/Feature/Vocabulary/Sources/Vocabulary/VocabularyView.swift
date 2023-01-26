@@ -59,8 +59,6 @@ final class VocabularyView: BaseView {
     ).then {
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
-        $0.isScrollEnabled = true
-        $0.backgroundColor = .clear
         
         $0.contentInset = Metric.CollectionView.contentInset
     }
@@ -75,8 +73,6 @@ final class VocabularyView: BaseView {
         super.init()
         
         backgroundColor = .white
-        
-        collectionView.register(cellType: VocabularyCell.self)
         
         dataSource = dataSourceFactory()
 
@@ -99,6 +95,7 @@ final class VocabularyView: BaseView {
         super.setupViews()
 
         collectionView.refreshControl = refreshControl
+        collectionView.register(cellType: VocabularyCell.self)
     }
 
     override func setupConstraints() {
@@ -108,7 +105,7 @@ final class VocabularyView: BaseView {
             $0.edges.equalTo(safeAreaLayoutGuide)
         }
     }
-
+    
     private func bind() {
         collectionView.rx.setDelegate(self)
             .disposed(by: self.disposeBag)
@@ -126,8 +123,9 @@ extension VocabularyView {
             configureCell: {
                 (dataSource, collectionView, indexPath, sectionItem) -> UICollectionViewCell in
                 switch sectionItem {
-                    case .voca:
+                    case .voca(let cellReactor):
                         let cell: VocabularyCell = collectionView.dequeueReusableCell(for: indexPath)
+                        cell.reactor = cellReactor
                         return cell
                 }
             }

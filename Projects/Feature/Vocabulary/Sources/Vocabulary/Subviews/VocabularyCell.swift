@@ -17,6 +17,7 @@ import Reusable
 
 import Common
 import Utility
+import Logger
 
 final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
@@ -102,20 +103,19 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
             $0.width.equalTo(44)
             $0.height.equalTo(44)
         }
-        
-        // Action
-        speakerButton.rx.tap
-            .asDriver(onErrorJustReturn: ())
-            .drive { [weak self] _ in
-                self?.startTTS("Apple")
-            }
-            .disposed(by: disposeBag)
     }
     
     // MARK: Binding
     func bind(reactor: Reactor) {
         
         // Action
+        
+        speakerButton.rx.tap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, action in
+                owner.startTTS("Apple")
+            }
+            .disposed(by: disposeBag)
         
         // State
         

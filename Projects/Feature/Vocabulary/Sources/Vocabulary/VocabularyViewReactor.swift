@@ -10,6 +10,8 @@ import ReactorKit
 import RxCocoa
 import RxSwift
 
+import Common
+
 final class VocabularyViewReactor: Reactor {
   
     enum Action {
@@ -22,8 +24,14 @@ final class VocabularyViewReactor: Reactor {
     }
 
     struct State {
-        var sections: [VocabularySection] = [.section([.voca, .voca])]
-        var isRefreshing: Bool = false
+        var sections: [VocabularySection] = [
+            .section([
+                .voca(VocabularyCellReactor()),
+                .voca(VocabularyCellReactor()),
+                .voca(VocabularyCellReactor())
+            ])
+        ]
+        @Pulse var isRefreshing: Bool = false
     }
 
     let initialState: State
@@ -41,6 +49,20 @@ final class VocabularyViewReactor: Reactor {
         case .refresh:
             return .concat([
                 .just(.setRefreshing(true)),
+                .just(.updateSections(
+                    [
+                        .section([
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor()),
+                            .voca(VocabularyCellReactor())
+                        ])
+                    ]
+                )),
                 .just(.setRefreshing(false))
             ])
         }
