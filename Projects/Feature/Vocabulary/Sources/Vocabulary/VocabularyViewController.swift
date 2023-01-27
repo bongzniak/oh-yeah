@@ -19,22 +19,6 @@ final class VocabularyViewController: BaseViewController, View {
     
     typealias Reactor = VocabularyViewReactor
     
-    private enum Metric {
-        
-    }
-    
-    private enum Color {
-        
-    }
-    
-    private enum Font {
-        
-    }
-    
-    private enum Localized {
-        
-    }
-    
     // MARK: Properties
 
     private weak var coordinator: VocabularyCoordinator?

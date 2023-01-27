@@ -17,14 +17,17 @@ import Then
 import Reusable
 
 import Common
+import DesignSystem
 
 final class VocabularyView: BaseView {
     
     typealias RxDataSource = RxCollectionViewSectionedReloadDataSource<VocabularySection>
     
     private enum Metric {
-        static var width: CGFloat {
+        static var cellWidth: CGFloat {
             UIScreen.main.bounds.width
+            - Metric.CollectionView.contentInset.left
+            - Metric.CollectionView.contentInset.right
         }
         enum CollectionView {
             static let contentInset: UIEdgeInsets = UIEdgeInsets(
@@ -63,16 +66,12 @@ final class VocabularyView: BaseView {
         $0.contentInset = Metric.CollectionView.contentInset
     }
     
-    let testLabel: UILabel = UILabel().then {
-        $0.text = ""
-    }
-    
     // MARK: Initializing
     
     override init() {
         super.init()
         
-        backgroundColor = .white
+        backgroundColor = .ohWhite
         
         dataSource = dataSourceFactory()
 
@@ -133,14 +132,10 @@ extension VocabularyView {
     }
     
     private func cellSize(indexPath: IndexPath) -> CGSize {
-        let cellWidth: CGFloat = Metric.width
-        - collectionView.contentInset.left
-        - collectionView.contentInset.right
-        
         let sectionItem = dataSource[indexPath.section].items[indexPath.item]
         switch sectionItem {
             case .voca:
-                return VocabularyCell.size(width: cellWidth)
+                return VocabularyCell.size(width: Metric.cellWidth)
         }
     }
 }

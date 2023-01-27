@@ -18,26 +18,30 @@ import Reusable
 import Common
 import Utility
 import Logger
+import DesignSystem
 
 final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
     typealias Reactor = VocabularyCellReactor
     
     private enum Metric {
-        static let height: CGFloat = 90
+        static let height: CGFloat = 80
     }
     
     private enum Color {
     }
     
     private enum Font {
+        static let spellingLabel: UIFont = .regular(ofSize: 16)
+        static let descriptionLabel: UIFont = .regular(ofSize: 14)
+        static let groupLabel: UIFont = .regular(ofSize: 12)
     }
     
     private enum Image {
         static let speaker: UIImage? = UIImage(systemName: "speaker.wave.3")?
-            .withTintColor(.white, renderingMode: .alwaysOriginal)
+            .withTintColor(.blue2, renderingMode: .alwaysOriginal)
         static let speakerFill: UIImage? = UIImage(systemName: "speaker.wave.3.fill")?
-            .withTintColor(.blue, renderingMode: .alwaysOriginal)
+            .withTintColor(.blue4, renderingMode: .alwaysOriginal)
     }
         
     // MARK: Properties
@@ -48,12 +52,17 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
     let spellingLabel: UILabel = UILabel().then {
         $0.text = "Apple"
+        $0.font = Font.spellingLabel
+        $0.textColor = .ohBlack
     }
     let descriptionLabel: UILabel = UILabel().then {
         $0.text = "사과"
+        $0.font = Font.descriptionLabel
+        $0.textColor = .gray7
     }
     let groupLabel: UILabel = UILabel().then {
         $0.text = "필수 영단어 100"
+        $0.font = Font.groupLabel
     }
     let speakerButton: UIButton = UIButton().then {
         $0.setImage(Image.speaker, for: .normal)
