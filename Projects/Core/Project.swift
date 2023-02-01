@@ -7,7 +7,7 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-private let projectName = "Logger"
+private let projectName = "Core"
 private let iOSTargetVersion = "16.0"
 
 let project = Project.framework(
@@ -15,7 +15,6 @@ let project = Project.framework(
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
     dependencies: [
-        .external(name: "CocoaLumberjack"),
-        .external(name: "CocoaLumberjackSwift")
+        .external(name: "RxSwift")
     ]
 )

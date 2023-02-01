@@ -13,7 +13,13 @@ public protocol TTSManagerDelegate: AnyObject {
     func speechDidFinish()
 }
 
-public class TTSManager: NSObject {
+protocol TTSManagerType {
+    func play(_ string: String)
+    func stop()
+    func isPlaying() -> Bool
+}
+
+public class TTSManager: NSObject, TTSManagerType {
     
     public static let shared = TTSManager()
     
