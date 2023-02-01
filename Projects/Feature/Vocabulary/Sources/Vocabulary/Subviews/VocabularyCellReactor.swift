@@ -10,6 +10,8 @@ import ReactorKit
 import RxCocoa
 import RxSwift
 
+import Core
+
 class VocabularyCellReactor: Reactor {
     
     enum Action {
@@ -19,14 +21,15 @@ class VocabularyCellReactor: Reactor {
     }
     
     struct State {
+        let vocabulary: Vocabulary
     }
     
     let initialState: State
 
     // MARK: Initializing
     
-    init() {
-        initialState = State()
+    init(vocabulary: Vocabulary) {
+        initialState = State(vocabulary: vocabulary)
     }
     
     // MARK: Mutation

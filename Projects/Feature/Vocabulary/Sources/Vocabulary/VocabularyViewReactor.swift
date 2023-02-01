@@ -10,7 +10,7 @@ import ReactorKit
 import RxCocoa
 import RxSwift
 
-import Common
+import Core
 
 final class VocabularyViewReactor: Reactor {
   
@@ -26,9 +26,11 @@ final class VocabularyViewReactor: Reactor {
     struct State {
         var sections: [VocabularySection] = [
             .section([
-                .voca(VocabularyCellReactor()),
-                .voca(VocabularyCellReactor()),
-                .voca(VocabularyCellReactor())
+                .vocabulary(Vocabulary.random()),
+                .vocabulary(Vocabulary.random()),
+                .vocabulary(Vocabulary.random()),
+                .vocabulary(Vocabulary.random()),
+                .vocabulary(Vocabulary.random())
             ])
         ]
         @Pulse var isRefreshing: Bool = false
@@ -41,7 +43,7 @@ final class VocabularyViewReactor: Reactor {
     init() {
         initialState = State()
     }
-
+    
     // MARK: Mutate
 
     func mutate(action: Action) -> Observable<Mutation> {
@@ -52,14 +54,17 @@ final class VocabularyViewReactor: Reactor {
                 .just(.updateSections(
                     [
                         .section([
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor()),
-                            .voca(VocabularyCellReactor())
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random()),
+                            .vocabulary(Vocabulary.random())
                         ])
                     ]
                 )),

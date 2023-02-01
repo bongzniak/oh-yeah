@@ -16,8 +16,12 @@ import SnapKit
 import Then
 import Reusable
 
-import Common
+import Core
 import DesignSystem
+
+protocol VocabularyViewDelegate: AnyObject {
+    func sentenceButtonDidTap(_ sentence: String)
+}
 
 final class VocabularyView: BaseView {
     
@@ -49,6 +53,8 @@ final class VocabularyView: BaseView {
     }
     
     // MARK: Properties
+    
+    weak var delegate: VocabularyViewDelegate?
 
     var dataSource: RxDataSource!
     let sections = PublishRelay<[VocabularySection]>()
@@ -74,7 +80,7 @@ final class VocabularyView: BaseView {
         backgroundColor = .ohWhite
         
         dataSource = dataSourceFactory()
-
+        
         bind()
     }
     
@@ -119,12 +125,13 @@ final class VocabularyView: BaseView {
 extension VocabularyView {
     private func dataSourceFactory() -> RxDataSource {
         RxDataSource(
-            configureCell: {
+            configureCell: { [weak self]
                 (dataSource, collectionView, indexPath, sectionItem) -> UICollectionViewCell in
                 switch sectionItem {
-                    case .voca(let cellReactor):
+                    case .vocabulary(let vocabulary):
                         let cell: VocabularyCell = collectionView.dequeueReusableCell(for: indexPath)
-                        cell.reactor = cellReactor
+                        cell.reactor = VocabularyCellReactor(vocabulary: vocabulary)
+                        self?.cellBind(cell)
                         return cell
                 }
             }
@@ -134,9 +141,21 @@ extension VocabularyView {
     private func cellSize(indexPath: IndexPath) -> CGSize {
         let sectionItem = dataSource[indexPath.section].items[indexPath.item]
         switch sectionItem {
-            case .voca:
+            case .vocabulary:
                 return VocabularyCell.size(width: Metric.cellWidth)
         }
+    }
+    
+    private func cellBind(_ cell: VocabularyCell) {
+        cell.sentenceButton.rx.tap
+            .map {
+                cell.reactor?.currentState.vocabulary.spelling ?? ""
+            }
+            .asDriver(onErrorJustReturn: "")
+            .drive(with: self, onNext: { owner, text in
+                owner.delegate?.sentenceButtonDidTap(text)
+            })
+            .disposed(by: disposeBag)
     }
 }
 

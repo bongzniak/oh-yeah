@@ -13,7 +13,7 @@ import RxCocoa
 import RxSwift
 
 // Module
-import Common
+import Core
 
 final class VocabularyViewController: BaseViewController, View {
     
@@ -56,6 +56,8 @@ final class VocabularyViewController: BaseViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        bodyView.delegate = self
     }
     
     // MARK: Binding
@@ -84,6 +86,12 @@ final class VocabularyViewController: BaseViewController, View {
             .asDriver(onErrorJustReturn: false)
             .drive(bodyView.refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
+    }
+}
+
+extension VocabularyViewController: VocabularyViewDelegate {
+    func sentenceButtonDidTap(_ sentence: String) {
+        logger.debug("sentence >> ", sentence)
     }
 }
 
