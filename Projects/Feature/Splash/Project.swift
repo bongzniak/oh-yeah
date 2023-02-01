@@ -22,7 +22,7 @@ let project = Project.frameworkWithDemoApp(
     iOSTargetVersion: iOSTargetVersion,
     infoPlist: infoPlist,
     dependencies: [
-        .project(target: "Common", path: .relativeToRoot("Projects/Core/Common")),
+        .project(target: "Core", path: .relativeToRoot("Projects/Core")),
         .external(name: "ReactorKit"),
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),

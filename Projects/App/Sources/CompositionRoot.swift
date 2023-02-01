@@ -12,11 +12,8 @@ import UIKit
 //import Firebase
 //import AdSupport
 
-import Common
-
+import Core
 import Splash
-import Logger
-
 
 struct AppDependency {
     typealias OpenURLHandler = (_ url: URL) -> Bool
@@ -56,7 +53,6 @@ struct AppDependency {
 final class CompositionRoot {
     static func resolve() -> AppDependency {
         let window = UIWindow(frame: UIScreen.main.bounds)
-        window.backgroundColor = .white
         window.makeKeyAndVisible()
 
 //        let presentLoginScreen: (() -> Void) = {

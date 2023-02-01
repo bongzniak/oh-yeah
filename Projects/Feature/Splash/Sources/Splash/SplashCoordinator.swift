@@ -8,7 +8,7 @@
 
 import UIKit
 
-import Common
+import Core
 
 public final class SplashCoordinator: Coordinator {
     

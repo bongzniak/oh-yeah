@@ -6,7 +6,7 @@
 //  Copyright © 2023 com.bongzniak. All rights reserved.
 //
 
-import Common
+import Core
 
 import UIKit
 
