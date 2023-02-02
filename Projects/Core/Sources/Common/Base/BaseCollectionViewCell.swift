@@ -9,12 +9,15 @@ import Logger
 import UIKit
 
 import RxSwift
+import RxCocoa
 
 open class BaseCollectionViewCell: UICollectionViewCell {
 
     // MARK: Properties
     
     public var disposeBag = DisposeBag()
+    
+    public let tapGesture = UITapGestureRecognizer()
 
     // MARK: Initializing
 
@@ -24,6 +27,9 @@ open class BaseCollectionViewCell: UICollectionViewCell {
         self.addViews()
         self.setupViews()
         self.setupConstraints()
+        
+        self.addGestureRecognizer(self.tapGesture)
+        self.contentView.isUserInteractionEnabled = true
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -49,5 +55,11 @@ open class BaseCollectionViewCell: UICollectionViewCell {
     }
 
     open func setupConstraints() {
+    }
+}
+
+extension Reactive where Base: BaseCollectionViewCell {
+    public var tap: ControlEvent<Void> {
+        return ControlEvent(events: base.tapGesture.rx.event.map { _ in () })
     }
 }
