@@ -14,14 +14,17 @@ import Core
 
 class VocabularyCellReactor: Reactor {
     
-    enum Action {
-    }
-    
-    enum Mutation {
-    }
+    typealias Action = NoAction
+    typealias Mutation = NoMutation
     
     struct State {
         let vocabulary: Vocabulary
+        var isShowDescription: Bool {
+            !vocabulary.description.isEmpty && vocabulary.isExpand
+        }
+        var isShowSentence: Bool {
+            !vocabulary.sentence.isEmpty && vocabulary.isExpand
+        }
     }
     
     let initialState: State
@@ -30,20 +33,5 @@ class VocabularyCellReactor: Reactor {
     
     init(vocabulary: Vocabulary) {
         initialState = State(vocabulary: vocabulary)
-    }
-    
-    // MARK: Mutation
-    func mutate(action: Action) -> Observable<Mutation> {
-        switch action {
-        }
-    }
-    
-    // MARK: Reduce
-    
-    func reduce(state: State, mutation: Mutation) -> State {
-        var state = state
-        switch mutation {
-        }
-        return state
     }
 }

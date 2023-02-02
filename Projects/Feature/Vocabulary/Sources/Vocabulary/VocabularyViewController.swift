@@ -58,6 +58,8 @@ final class VocabularyViewController: BaseViewController, View {
         super.viewDidLoad()
         
         bodyView.delegate = self
+        
+        reactor?.action.onNext(.fetch)
     }
     
     // MARK: Binding
@@ -90,8 +92,9 @@ final class VocabularyViewController: BaseViewController, View {
 }
 
 extension VocabularyViewController: VocabularyViewDelegate {
-    func sentenceButtonDidTap(_ sentence: String) {
-        logger.debug("sentence >> ", sentence)
+    func sentenceButtonDidTap(_ vocabulary: Vocabulary) {
+        // TODO: show sentence
+        reactor?.action.onNext(.updateVocabulary(vocabulary))
     }
 }
 

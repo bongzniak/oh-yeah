@@ -23,27 +23,45 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     typealias Reactor = VocabularyCellReactor
     
     private enum Metric {
-        static let height: CGFloat = 100
+        static let cornerRadius: CGFloat = 8
+        static let padding: CGFloat = 8
         
-        static let speakerButton: CGSize = CGSize(width: 44, height: 44)
+        enum StarImageStackView {
+            enum Margin {
+                static let top: CGFloat = 10
+            }
+        }
+        
+        enum LabelStackView {
+            enum Margin {
+                static let top: CGFloat = 4
+            }
+            static let spacing: CGFloat = 6
+        }
+        
+        enum GroupLabel {
+            enum Margin {
+                static let top: CGFloat = 16
+            }
+        }
+        
+        enum SpeackerButton {
+            static let size: CGSize = CGSize(width: 44, height: 44)
+        }
     }
     
     private enum Color {
         static let background: UIColor = .gray2
-        enum SentenceButton {
-            static let background: UIColor = .blue4
-            // static let text: UIColor = .white
-            static let text: UIColor = .blue4
-        }
         static let spellingLabel: UIColor = .gray10
-        static let descriptionLabel: UIColor = .gray8
+        static let descriptionLabel: UIColor = .blue6
+        static let sentenceLabel: UIColor = .gray8
         static let groupLabel: UIColor = .gray6
     }
     
     private enum Font {
-        static let sectenceButton: UIFont = .regular(ofSize: 14)
         static let spellingLabel: UIFont = .regular(ofSize: 16)
-        static let descriptionLabel: UIFont = .regular(ofSize: 12)
+        static let descriptionLabel: UIFont = .bold(ofSize: 14)
+        static let sentenceLabel: UIFont = .regular(ofSize: 12)
         static let groupLabel: UIFont = .regular(ofSize: 10)
     }
     
@@ -52,6 +70,9 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
             .withTintColor(.gray10, renderingMode: .alwaysOriginal)
         static let speakerFill: UIImage? = UIImage(systemName: "speaker.wave.3.fill")?
             .withTintColor(.gray10, renderingMode: .alwaysOriginal)
+        static let starFill: UIImage? = UIImage(systemName: "star.fill")?
+            .withTintColor(.gray10, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(font: .regular(ofSize: 8)))
     }
     
     private enum Localized {
@@ -64,38 +85,35 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     private let ttsManager: TTSManager = TTSManager.shared
     
     // MARK: UI Views
-    
     let starImageStackView: UIStackView = UIStackView().then {
         $0.alignment = .fill
-        $0.axis = .horizontal
         $0.distribution = .fill
+        $0.axis = .horizontal
         $0.spacing = 1
     }
-    let sentenceButton: UIButton = UIButton().then {
-        $0.titleLabel?.font = Font.sectenceButton
-        $0.setTitle(Localized.sectence, for: .normal)
-        $0.setTitleColor(Color.SentenceButton.text, for: .normal)
-        
-        $0.configuration?.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: 0,
-            bottom: 0,
-            trailing: 0
-        )
-        
-//        $0.layer.borderWidth = 1
-//        $0.layer.cornerRadius = 4
-//        $0.layer.borderColor = UIColor.gray3.cgColor
-//        $0.backgroundColor = Color.SentenceButton.background
+    
+    let labelStackView: UIStackView = UIStackView().then {
+        $0.alignment = .fill
+        $0.distribution = .fill
+        $0.axis = .vertical
+        $0.spacing = Metric.LabelStackView.spacing
     }
     let spellingLabel: UILabel = UILabel().then {
         $0.font = Font.spellingLabel
         $0.textColor = Color.spellingLabel
+        $0.numberOfLines = 0
     }
     let descriptionLabel: UILabel = UILabel().then {
         $0.font = Font.descriptionLabel
         $0.textColor = Color.descriptionLabel
+        $0.numberOfLines = 0
     }
+    let sentenceLabel: UILabel = UILabel().then {
+        $0.font = Font.sentenceLabel
+        $0.textColor = Color.sentenceLabel
+        $0.numberOfLines = 0
+    }
+    
     let groupLabel: UILabel = UILabel().then {
         $0.text = Localized.group
         $0.font = Font.groupLabel
@@ -111,9 +129,7 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        for view in starImageStackView.subviews {
-            starImageStackView.removeArrangedSubview(view)
-        }
+        removeStartImageStackViewSubviews()
     }
     
     // MARK: UI Setup
@@ -122,9 +138,12 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
         super.addViews()
         
         contentView.addSubview(starImageStackView)
-        contentView.addSubview(sentenceButton)
-        contentView.addSubview(spellingLabel)
-        contentView.addSubview(descriptionLabel)
+        
+        labelStackView.addArrangedSubview(spellingLabel)
+        labelStackView.addArrangedSubview(descriptionLabel)
+        labelStackView.addArrangedSubview(sentenceLabel)
+        contentView.addSubview(labelStackView)
+        
         contentView.addSubview(groupLabel)
         contentView.addSubview(speakerButton)
     }
@@ -132,7 +151,7 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     override func setupViews() {
         super.setupViews()
         
-        contentView.layer.cornerRadius = 8
+        contentView.layer.cornerRadius = Metric.cornerRadius
         contentView.backgroundColor = Color.background
     }
     
@@ -140,33 +159,26 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
         super.setupConstraints()
         
         starImageStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.leading.equalToSuperview().inset(8)
-        }
-        sentenceButton.snp.makeConstraints {
-            $0.top.equalTo(starImageStackView)
-            $0.trailing.equalToSuperview().inset(8)
+            $0.top.equalToSuperview().inset(Metric.StarImageStackView.Margin.top)
+            $0.leading.equalToSuperview().inset(Metric.padding)
         }
         
-        spellingLabel.snp.makeConstraints {
-            $0.top.equalTo(starImageStackView.snp.bottom).offset(8)
-            $0.leading.equalToSuperview().inset(8)
-        }
-        descriptionLabel.snp.makeConstraints {
-            $0.leading.equalTo(spellingLabel)
-            $0.top.equalTo(spellingLabel.snp.bottom).offset(8)
+        labelStackView.snp.makeConstraints {
+            $0.top.equalTo(starImageStackView.snp.bottom).offset(Metric.LabelStackView.Margin.top)
+            $0.leading.trailing.equalToSuperview().inset(Metric.padding)
         }
         groupLabel.snp.makeConstraints {
+            $0.top.equalTo(labelStackView.snp.bottom).offset(Metric.GroupLabel.Margin.top)
             $0.leading.equalTo(spellingLabel)
-            $0.bottom.equalToSuperview().inset(8)
         }
         speakerButton.snp.makeConstraints {
             $0.trailing.bottom.equalToSuperview()
-            $0.size.equalTo(Metric.speakerButton)
+            $0.size.equalTo(Metric.SpeackerButton.size)
         }
     }
     
     // MARK: Binding
+    
     func bind(reactor: Reactor) {
         // Action
         bindAction(reactor: reactor)
@@ -188,32 +200,70 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     }
     
     private func bindState(reactor: Reactor) {
+        
         reactor.state.map { $0.vocabulary.spelling }
+            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
             .drive(spellingLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.vocabulary.description }
+            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
             .drive(descriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
+        reactor.state.map { $0.isShowDescription }
+            .distinctUntilChanged()
+            .map { !$0 }
+            .asDriver(onErrorJustReturn: true)
+            .drive(descriptionLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.vocabulary.sentence }
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: "")
+            .drive(sentenceLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.isShowSentence }
+            .distinctUntilChanged()
+            .map { !$0 }
+            .asDriver(onErrorJustReturn: true)
+            .drive(sentenceLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
         reactor.state.map { $0.vocabulary.starCount }
+            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: 0)
-            .filter { $0 > 1 }
-            .drive(onNext: { [weak self] starCount in
-                guard let self = self else { return }
-                
-                for view in self.starImageStackView.subviews {
-                    self.starImageStackView.removeArrangedSubview(view)
-                }
-                for _ in 0...starCount {
-                    self.starImageStackView.addArrangedSubview(self.makeStartImageView())
-                }
-            })
+            .drive(with: self) { owner, starCound in
+                owner.removeStartImageStackViewSubviews()
+                owner.addArrangedStarImageStackViews(count: starCound)
+            }
             .disposed(by: disposeBag)
     }
     
+    private func removeStartImageStackViewSubviews() {
+        for view in starImageStackView.subviews {
+            starImageStackView.removeArrangedSubview(view)
+        }
+    }
+    
+    private func addArrangedStarImageStackViews(count: Int) {
+        for _ in 0...count {
+            starImageStackView.addArrangedSubview(makeStartImageView())
+        }
+    }
+
+    private func makeStartImageView() -> UIImageView {
+        UIImageView(image: Image.starFill)
+    }
+}
+
+
+// MARK: TTS
+
+extension VocabularyCell {
     private func startTTS(_ spelling: String) {
         guard !ttsManager.isPlaying() else { return }
         
@@ -228,15 +278,9 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
         
         ttsManager.delegate = nil
     }
-    
-    private func makeStartImageView() -> UIImageView {
-        UIImageView(
-            image: UIImage(systemName: "star.fill")?
-                .withTintColor(.gray10, renderingMode: .alwaysOriginal)
-                .withConfiguration(UIImage.SymbolConfiguration(font: .regular(ofSize: 8)))
-        )
-    }
 }
+
+// MARK: TTSManagerDelegate
 
 extension VocabularyCell: TTSManagerDelegate {
     func speechDidFinish() {
@@ -244,8 +288,64 @@ extension VocabularyCell: TTSManagerDelegate {
     }
 }
 
+// MARK: Size
+
 extension VocabularyCell {
-    class func size(width: CGFloat) -> CGSize {
-        CGSize(width: width, height: Metric.height)
+    class func size(
+        width: CGFloat,
+        vocabulary: Vocabulary
+    ) -> CGSize {
+        let contentWidth = width - Metric.padding
+        var height: CGFloat = 0
+        
+        // StarStackView
+        
+        height += Metric.StarImageStackView.Margin.top
+        height += Image.starFill?.size.height ?? 0
+        
+        // SpellingLabel
+        
+        height += Metric.LabelStackView.Margin.top
+        height += vocabulary.spelling.textSize(
+            font: Font.spellingLabel,
+            width: contentWidth
+        ).height
+        
+        
+        if vocabulary.isExpand {
+            // DescriptionLabel
+
+            if !vocabulary.description.isEmpty {
+                height += Metric.LabelStackView.spacing
+                height += vocabulary.description.textSize(
+                    font: Font.descriptionLabel,
+                    width: contentWidth
+                ).height
+            }
+            
+            // SentenceLabel
+            
+            if !vocabulary.sentence.isEmpty {
+                height += Metric.LabelStackView.spacing
+                height += vocabulary.sentence.textSize(
+                    font: Font.sentenceLabel,
+                    width: contentWidth
+                ).height
+            }
+        }
+        
+        // GroupLabel
+        
+        height += Metric.GroupLabel.Margin.top
+        height += vocabulary.group.textSize(
+            font: Font.groupLabel,
+            width: contentWidth
+        ).height
+        
+        // Bottom padding
+        
+        height += Metric.padding
+        
+        return CGSize(width: width, height: height)
     }
 }

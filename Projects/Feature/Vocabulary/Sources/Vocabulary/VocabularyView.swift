@@ -20,7 +20,7 @@ import Core
 import DesignSystem
 
 protocol VocabularyViewDelegate: AnyObject {
-    func sentenceButtonDidTap(_ sentence: String)
+    func sentenceButtonDidTap(_ vocabulary: Vocabulary)
 }
 
 final class VocabularyView: BaseView {
@@ -126,7 +126,7 @@ extension VocabularyView {
     private func dataSourceFactory() -> RxDataSource {
         RxDataSource(
             configureCell: { [weak self]
-                (dataSource, collectionView, indexPath, sectionItem) -> UICollectionViewCell in
+                (_, collectionView, indexPath, sectionItem) -> UICollectionViewCell in
                 switch sectionItem {
                     case .vocabulary(let vocabulary):
                         let cell: VocabularyCell = collectionView.dequeueReusableCell(for: indexPath)
@@ -141,21 +141,19 @@ extension VocabularyView {
     private func cellSize(indexPath: IndexPath) -> CGSize {
         let sectionItem = dataSource[indexPath.section].items[indexPath.item]
         switch sectionItem {
-            case .vocabulary:
-                return VocabularyCell.size(width: Metric.cellWidth)
+            case .vocabulary(let vocabulary):
+                return VocabularyCell.size(width: Metric.cellWidth, vocabulary: vocabulary)
         }
     }
     
     private func cellBind(_ cell: VocabularyCell) {
-        cell.sentenceButton.rx.tap
-            .map {
-                cell.reactor?.currentState.vocabulary.spelling ?? ""
+        cell.rx.tap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, _ in
+                guard let vocabulary = cell.reactor?.currentState.vocabulary else { return }
+                owner.delegate?.sentenceButtonDidTap(vocabulary)
             }
-            .asDriver(onErrorJustReturn: "")
-            .drive(with: self, onNext: { owner, text in
-                owner.delegate?.sentenceButtonDidTap(text)
-            })
-            .disposed(by: disposeBag)
+            .disposed(by: cell.disposeBag)
     }
 }
 
