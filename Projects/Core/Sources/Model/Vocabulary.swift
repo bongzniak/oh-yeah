@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Vocabulary: Hashable {
+public struct Vocabulary: Hashable, Equatable {
     public let group: String
     public let section: String
     
@@ -44,5 +44,9 @@ public struct Vocabulary: Hashable {
             Vocabulary(spelling: "design", description: "디자인"),
         ]
             .randomElement() ?? Vocabulary(spelling: "", description: "")
+    }
+    
+    public static func ==(lhs: Vocabulary, rhs: Vocabulary) -> Bool {
+        lhs.spelling == rhs.spelling
     }
 }
