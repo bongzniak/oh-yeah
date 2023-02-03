@@ -7,8 +7,6 @@
 
 import UIKit
 
-import Logger
-
 open class BaseNavigationController: UINavigationController {
     
     // MARK: Properties

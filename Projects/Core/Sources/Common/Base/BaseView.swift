@@ -6,8 +6,6 @@
 // Copyright 2022 tmsae. All rights reserved.
 //
 
-import Logger
-
 import UIKit
 
 import RxSwift
