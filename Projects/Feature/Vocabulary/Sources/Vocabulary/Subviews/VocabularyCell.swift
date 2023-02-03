@@ -27,22 +27,16 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
         static let padding: CGFloat = 8
         
         enum StarImageStackView {
-            enum Margin {
-                static let top: CGFloat = 10
-            }
+            static let margin: UIEdgeInsets = UIEdgeInsets(top: 10)
         }
         
         enum LabelStackView {
-            enum Margin {
-                static let top: CGFloat = 4
-            }
+            static let margin: UIEdgeInsets = UIEdgeInsets(top: 4)
             static let spacing: CGFloat = 6
         }
         
         enum GroupLabel {
-            enum Margin {
-                static let top: CGFloat = 16
-            }
+            static let margin: UIEdgeInsets = UIEdgeInsets(top: 16)
         }
         
         enum SpeackerButton {
@@ -77,7 +71,6 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
     private enum Localized {
         static let sectence: String = "예문"
-        static let group: String = "필수 영단어 100"
     }
     
     // MARK: Properties
@@ -115,7 +108,6 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     }
     
     let groupLabel: UILabel = UILabel().then {
-        $0.text = Localized.group
         $0.font = Font.groupLabel
         $0.textColor = Color.groupLabel
     }
@@ -159,16 +151,16 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
         super.setupConstraints()
         
         starImageStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(Metric.StarImageStackView.Margin.top)
+            $0.top.equalToSuperview().inset(Metric.StarImageStackView.margin.top)
             $0.leading.equalToSuperview().inset(Metric.padding)
         }
         
         labelStackView.snp.makeConstraints {
-            $0.top.equalTo(starImageStackView.snp.bottom).offset(Metric.LabelStackView.Margin.top)
+            $0.top.equalTo(starImageStackView.snp.bottom).offset(Metric.LabelStackView.margin.top)
             $0.leading.trailing.equalToSuperview().inset(Metric.padding)
         }
         groupLabel.snp.makeConstraints {
-            $0.top.equalTo(labelStackView.snp.bottom).offset(Metric.GroupLabel.Margin.top)
+            $0.top.equalTo(labelStackView.snp.bottom).offset(Metric.GroupLabel.margin.top)
             $0.leading.equalTo(spellingLabel)
         }
         speakerButton.snp.makeConstraints {
@@ -300,12 +292,12 @@ extension VocabularyCell {
         
         // StarStackView
         
-        height += Metric.StarImageStackView.Margin.top
+        height += Metric.StarImageStackView.margin.top
         height += Image.starFill?.size.height ?? 0
         
         // SpellingLabel
         
-        height += Metric.LabelStackView.Margin.top
+        height += Metric.LabelStackView.margin.top
         height += vocabulary.spelling.textSize(
             font: Font.spellingLabel,
             width: contentWidth
@@ -336,7 +328,7 @@ extension VocabularyCell {
         
         // GroupLabel
         
-        height += Metric.GroupLabel.Margin.top
+        height += Metric.GroupLabel.margin.top
         height += vocabulary.group.textSize(
             font: Font.groupLabel,
             width: contentWidth

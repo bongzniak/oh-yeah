@@ -75,9 +75,7 @@ final class VocabularyViewController: BaseViewController, View {
         
         // State
         
-        reactor.state.map {
-                $0.sections
-            }
+        reactor.state.map { $0.sections }
             .asDriver(onErrorJustReturn: [])
             .drive(with: self) { owner, sections in
                 owner.bodyView.sections.accept(sections)
