@@ -1,43 +1,23 @@
 import Foundation
 
-import CocoaLumberjack
-import CocoaLumberjackSwift
-
-extension DDLogFlag {
-    public var level: String {
-        switch self {
-        case DDLogFlag.error: return "⛔️ ERROR"
-        case DDLogFlag.warning: return "⚠️ WARNING"
-        case DDLogFlag.info: return "ℹ️ INFO"
-        case DDLogFlag.debug: return "🐛 DEBUG"
-        case DDLogFlag.verbose: return "🔎 VERBOSE"
-        default: return "☠️ UNKNOWN"
-        }
-    }
+enum LogLevel {
+    case error
+    case warning
+    case info
+    case debug
+    case verbose
 }
 
-private class LogFormatter: NSObject, DDLogFormatter {
-    
-    static let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        return dateFormatter
-    }()
-    
-    public func format(message logMessage: DDLogMessage) -> String? {
-        let timestamp = LogFormatter.dateFormatter.string(from: logMessage.timestamp)
-        let level = logMessage.flag.level
-        let filename = logMessage.fileName
-        let function = logMessage.function ?? ""
-        let line = logMessage.line
-        let message = logMessage.message.components(separatedBy: "\n").joined(separator: "\n    ")
-        return "\(timestamp) \(level) \(filename).\(function):\(line) - \(message)"
+extension LogLevel {
+    public var prefix: String {
+        switch self {
+            case .error: return "⛔️ ERROR"
+            case .warning: return "⚠️ WARNING"
+            case .info: return "ℹ️ INFO"
+            case .debug: return "🐛 DEBUG"
+            case .verbose: return "🔎 VERBOSE"
+        }
     }
-    
-    private func formattedDate(from date: Date) -> String {
-        return LogFormatter.dateFormatter.string(from: date)
-    }
-    
 }
 
 /// A shared instance of `Logger`.
@@ -47,92 +27,85 @@ public final class Logger {
     
     // MARK: Initialize
     
-    init() {
-        setenv("XcodeColors", "YES", 0)
-        
-        // TTY = Xcode console
-        if let sharedInstance = DDTTYLogger.sharedInstance {
-            sharedInstance.logFormatter = LogFormatter()
-            sharedInstance.colorsEnabled = false /* true */ // Note: doesn't work in Xcode 8
-            sharedInstance.setForegroundColor(
-                DDMakeColor(30, 121, 214),
-                backgroundColor: nil, for: .info
-            )
-            sharedInstance.setForegroundColor(
-                DDMakeColor(50, 143, 72),
-                backgroundColor: nil, for: .debug
-            )
-            DDLog.add(sharedInstance)
-        }
-        
-        // File logger
-        let fileLogger: DDFileLogger = DDFileLogger()
-        fileLogger.rollingFrequency = TimeInterval(60 * 60 * 24) // 24 hours
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-        DDLog.add(fileLogger)
+    init() { }
+    
+    private func debugPrint(
+        _ message: @autoclosure () -> Any,
+        file: String = #file,
+        function: StaticString = #function,
+        line: UInt = #line,
+        context: Any? = nil,
+        level: LogLevel = .debug
+    ) {
+        #if DEBUG
+        print("\(self.timeStamp())\(level.prefix) \(self.fileInformation(file, function, line)) - \(message())")
+        #endif
     }
     
     // MARK: Logging
     
     public func error(
         _ items: Any...,
-        file: StaticString = #file,
+        file: String = #file,
         function: StaticString = #function,
         line: UInt = #line
     ) {
         let message = self.message(from: items)
-        DDLogError(message, file: file, function: function, line: line)
+        debugPrint(message, file: file, function: function, line: line, level: .error)
     }
     
     public func warning(
         _ items: Any...,
-        file: StaticString = #file,
+        file: String = #file,
         function: StaticString = #function,
         line: UInt = #line
     ) {
         let message = self.message(from: items)
-        DDLogWarn(message, file: file, function: function, line: line)
+        debugPrint(message, file: file, function: function, line: line, level: .warning)
     }
     
     public func info(
         _ items: Any...,
-        file: StaticString = #file,
+        file: String = #file,
         function: StaticString = #function,
         line: UInt = #line
     ) {
         let message = self.message(from: items)
-        DDLogInfo(message, file: file, function: function, line: line)
+        debugPrint(message, file: file, function: function, line: line, level: .info)
     }
     
     public func debug(
         _ items: Any...,
-        file: StaticString = #file,
+        file: String = #file,
         function: StaticString = #function,
         line: UInt = #line
     ) {
         let message = self.message(from: items)
-        DDLogDebug(message, file: file, function: function, line: line)
+        debugPrint(message, file: file, function: function, line: line, level: .debug)
     }
     
     public func verbose(
         _ items: Any...,
-        file: StaticString = #file,
+        file: String = #file,
         function: StaticString = #function,
         line: UInt = #line
     ) {
         let message = self.message(from: items)
-        DDLogVerbose(message, file: file, function: function, line: line)
+        debugPrint(message, file: file, function: function, line: line, level: .verbose)
     }
-
-    // MARK: Utils
-    private func logPrefix(file: String,
-                           function: String,
-                           line: UInt) -> String {
+    
+    
+    private func timeStamp() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS "
         
-        let filename = file.components(separatedBy: "/").last?.split(separator: ".").first ?? ""
-        let format = "\(filename).\(function):\(line)"
-        
-        return format
+        return dateFormatter.string(from: Date())
+    }
+    
+    private func fileInformation(_ file: String, _ function: StaticString, _ line: UInt) -> String {
+        guard let lastFile = file.components(separatedBy: "/").last,
+              !lastFile.isEmpty else { return "No File" }
+        return lastFile.replacingOccurrences(of: ".swift", with: "") + ".\(function)" + ":\(line)"
     }
     
     private func message(from items: [Any]) -> String {

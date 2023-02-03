@@ -8,9 +8,6 @@
 import ProjectDescription
 
 let dependencies = Dependencies(
-    carthage: CarthageDependencies([
-        .github(path: "CocoaLumberjack/CocoaLumberjack", requirement: .exact("3.8.0"))
-    ]),
     swiftPackageManager: SwiftPackageManagerDependencies(
         [
             .remote(url: "https://github.com/ReactorKit/ReactorKit.git", requirement: .upToNextMajor(from: "3.2.0")),
@@ -31,7 +28,7 @@ let dependencies = Dependencies(
             "SnapKit": .framework,
             "Then": .framework,
             "Kingfisher": .framework,
-            "Reusable": .framework
+            "Reusable": .framework,
         ]
 //        baseSettings: .settings(configurations: [
 //            .debug(name: "DEV"),
