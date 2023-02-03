@@ -63,14 +63,16 @@ extension Project {
         platform: Platform,
         iOSTargetVersion: String,
         infoPlist: [String: InfoPlist.Value] = [:],
-        dependencies: [TargetDependency] = []
+        dependencies: [TargetDependency] = [],
+        coreDataModels: [CoreDataModel] = []
     ) -> Project {
         let targets = makeFrameworkTargets(
             name: name,
             platform: platform,
             iOSTargetVersion: iOSTargetVersion,
             infoPlist: infoPlist,
-            dependencies: dependencies
+            dependencies: dependencies,
+            coreDataModels: coreDataModels
         )
         return Project(name: name, organizationName: organizationName, targets: targets)
     }
@@ -83,7 +85,8 @@ private extension Project {
         platform: Platform,
         iOSTargetVersion: String,
         infoPlist: [String: InfoPlist.Value]? = nil,
-        dependencies: [TargetDependency] = []
+        dependencies: [TargetDependency] = [],
+        coreDataModels: [CoreDataModel] = []
     ) -> [Target] {
         let sources = Target(
             name: name,
@@ -94,7 +97,8 @@ private extension Project {
             infoPlist: infoPlist == nil ? .default : .extendingDefault(with: infoPlist!),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: dependencies
+            dependencies: dependencies,
+            coreDataModels: coreDataModels
         )
         let tests = Target(
             name: "\(name)Tests",
