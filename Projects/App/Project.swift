@@ -19,6 +19,6 @@ let project = Project.app(
     infoPlist: infoPlistPath,
     dependencies: [
         .project(target: "Core", path: .relativeToRoot("Projects/Core")),
-        .project(target: "Splash", path: .relativeToRoot("Projects/Feature/Splash"))
+        .project(target: "Splash", path: .relativeToRoot("Projects/Feature/Splash")),
     ]
 )
