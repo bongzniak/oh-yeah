@@ -16,6 +16,10 @@ let project = Project.framework(
     iOSTargetVersion: iOSTargetVersion,
     dependencies: [
         .external(name: "RxSwift"),
-        .external(name: "RxDataSources")
+        .external(name: "RxDataSources"),
+        .external(name: "Moya")
+    ],
+    coreDataModels: [
+        CoreDataModel("Sources/CoreData/dataModel.xcdatamodeld"),
     ]
 )
