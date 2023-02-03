@@ -93,7 +93,6 @@ final class VocabularyViewController: BaseViewController, View {
 
 extension VocabularyViewController: VocabularyViewDelegate {
     func sentenceButtonDidTap(_ vocabulary: Vocabulary) {
-        // TODO: show sentence
         reactor?.action.onNext(.updateVocabulary(vocabulary))
     }
 }
