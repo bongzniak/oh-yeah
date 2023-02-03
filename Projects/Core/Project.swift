@@ -15,6 +15,7 @@ let project = Project.framework(
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
     dependencies: [
-        .external(name: "RxSwift")
+        .external(name: "RxSwift"),
+        .external(name: "RxDataSources")
     ]
 )
