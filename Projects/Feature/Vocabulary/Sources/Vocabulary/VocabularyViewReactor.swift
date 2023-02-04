@@ -22,6 +22,7 @@ final class VocabularyViewReactor: Reactor {
     
     enum Mutation {
         case setRefreshing(Bool)
+        case updateVocabularies([Vocabulary])
         case updateSections([VocabularySection])
     }
     
@@ -55,33 +56,17 @@ final class VocabularyViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
             case .fetch:
-                return .just(.updateSections([generateVocabularySection()]))
+                return fetchVocabularies()
             
             case .refresh:
-                vocabularies = [
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                    Vocabulary.random(),
-                ]
-                
                 return .concat([
                     .just(.setRefreshing(true)),
-                    .just(.updateSections([generateVocabularySection()])),
+                    fetchVocabularies(),
                     .just(.setRefreshing(false))
                 ])
                 
-            case .updateVocabulary(var vocabulaty):
-                vocabulaty.isExpand.toggle()
-                if let index = vocabularies.firstIndex(
-                    where: {$0.spelling == vocabulaty.spelling }
-                ) {
+            case .updateVocabulary(let vocabulaty):
+                if let index = vocabularies.firstIndex(where: { $0 == vocabulaty }) {
                     vocabularies[index] = vocabulaty
                 }
                 
@@ -100,6 +85,10 @@ final class VocabularyViewReactor: Reactor {
                 
             case .updateSections(let sections):
                 state.sections = sections
+                
+            case .updateVocabularies(let vocabularies):
+                self.vocabularies = vocabularies
+                state.sections = [generateVocabularySection()]
         }
         
         return state
@@ -107,6 +96,14 @@ final class VocabularyViewReactor: Reactor {
 }
 
 extension VocabularyViewReactor {
+    
+    private func fetchVocabularies() -> Observable<Mutation> {
+        vocabularyService.fetchVocabularies()
+            .map { response -> Mutation in
+                return .updateVocabularies(response)
+            }
+    }
+    
     private func generateVocabularySection() -> VocabularySection {
         .section(
             vocabularies.map { vocabulary -> VocabularySection.Item in
