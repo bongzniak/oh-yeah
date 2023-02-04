@@ -98,7 +98,11 @@ extension VocabularyViewController: VocabularyViewDelegate {
 extension VocabularyViewController {
     class func instance() -> VocabularyViewController {
         VocabularyViewController(
-            reactor: VocabularyViewReactor(),
+            reactor: VocabularyViewReactor(
+                vocabularyService: VocabularyCoreDataService(
+                    coreDataManager: CoreDataManager.shared
+                )
+            ),
             bodyView: VocabularyView.instance()
         )
     }

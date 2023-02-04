@@ -32,6 +32,8 @@ final class VocabularyViewReactor: Reactor {
     
     let initialState: State
     
+    let vocabularyService: VocabularyServiceType
+    
     private var vocabularies: [Vocabulary] = [
         Vocabulary.random(),
         Vocabulary.random(),
@@ -42,7 +44,9 @@ final class VocabularyViewReactor: Reactor {
     
     // MARK: Initializing
     
-    init() {
+    init(vocabularyService: VocabularyServiceType) {
+        self.vocabularyService = vocabularyService
+        
         initialState = State()
     }
     
