@@ -100,7 +100,7 @@ extension VocabularyViewController {
         VocabularyViewController(
             reactor: VocabularyViewReactor(
                 vocabularyService: VocabularyCoreDataService(
-                    coreDataManager: CoreDataManager.shared
+                    vocalbularyStore: VocabularyRepository(coreDataManager: CoreDataManager.shared)
                 )
             ),
             bodyView: VocabularyView.instance()

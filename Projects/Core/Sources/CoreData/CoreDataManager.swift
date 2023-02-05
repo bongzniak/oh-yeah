@@ -13,15 +13,11 @@ import RxSwift
 
 // MARK: - Core Data stack
 
-protocol CoreDataManagerType {
-    func fetchVocabularies() -> [Vocabulary]
-}
-
 public final class CoreDataManager {
     
     public static let shared = CoreDataManager()
     
-    private lazy var persistentContainer: NSPersistentCloudKitContainer = {
+    lazy var persistentContainer: NSPersistentCloudKitContainer = {
         /*
          The persistent container for the application. This implementation
          creates and returns a container, having loaded the store for the
@@ -61,7 +57,7 @@ public final class CoreDataManager {
     
     // MARK: - Core Data Saving support
     
-    private func saveContext() {
+    func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
@@ -73,32 +69,5 @@ public final class CoreDataManager {
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
-    }
-}
-
-extension CoreDataManager: CoreDataManagerType {
-    public func fetchVocabularies() -> [Vocabulary] {
-        let request: NSFetchRequest<VocabulayEntity> = VocabulayEntity.fetchRequest()
-        var fetchedResult: [VocabulayEntity] = []
-        
-        do {
-            fetchedResult = try persistentContainer.viewContext.fetch(request)
-        } catch let error {
-            print("Error fetching vocabularies \(error)")
-        }
-        
-        return fetchedResult.map {
-            Vocabulary(spelling: $0.title ?? "", description: $0.subtitle ?? "asdads")
-        }
-    }
-    
-    public func saveVocabulary() -> VocabulayEntity {
-        let test = VocabulayEntity(context: persistentContainer.viewContext)
-        test.title = "appple"
-        test.subtitle = "사과"
-        
-        saveContext()
-        
-        return test
     }
 }

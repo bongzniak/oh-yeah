@@ -17,17 +17,17 @@ public protocol VocabularyServiceType {
 
 public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
     
-    public let coreDataManager: CoreDataManager
+    private let vocalbularyStore: VocabularyStore
     
-    public init(coreDataManager: CoreDataManager) {
-        self.coreDataManager = coreDataManager
+    public init(vocalbularyStore: VocabularyStore) {
+        self.vocalbularyStore = vocalbularyStore
     }
     
     public func fetchVocabularies() -> Observable<[Vocabulary]> {
         return Observable<[Vocabulary]>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
             
-            let vocabularies = self.coreDataManager.fetchVocabularies()
+            let vocabularies = self.vocalbularyStore.fetchVocabularies()
             observer.onNext(vocabularies)
             observer.onCompleted()
             
