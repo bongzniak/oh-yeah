@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-open class BaseCollectionViewCell: UICollectionViewCell {
+open class BaseCollectionViewCell: UICollectionViewCell, BaseViewProtocol {
 
     // MARK: Properties
     
@@ -22,9 +22,10 @@ open class BaseCollectionViewCell: UICollectionViewCell {
     public override init(frame: CGRect) {
         super.init(frame: .zero)
 
-        self.addViews()
-        self.setupViews()
-        self.setupConstraints()
+        setupProperty()
+        setupDelegate()
+        setupHierarchy()
+        setupLayout()
         
         self.addGestureRecognizer(self.tapGesture)
         self.contentView.isUserInteractionEnabled = true
@@ -46,14 +47,10 @@ open class BaseCollectionViewCell: UICollectionViewCell {
     
     // MARK: UI Setup
 
-    open func addViews() {
-    }
-
-    open func setupViews() {
-    }
-
-    open func setupConstraints() {
-    }
+    open func setupProperty() {}
+    open func setupDelegate() {}
+    open func setupHierarchy() {}
+    open func setupLayout() {}
 }
 
 extension Reactive where Base: BaseCollectionViewCell {

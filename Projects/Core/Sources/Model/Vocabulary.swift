@@ -30,20 +30,7 @@ public struct Vocabulary: Hashable, Equatable {
         self.spelling = spelling
         self.description = description
         self.sentence = "He risked his life to save her."
-        
-        self.starCount = 4
-    }
-    
-    public static func random() -> Vocabulary {
-        [
-            Vocabulary(spelling: "appleappleappleappleappleappleappleappleapple", description: "사과"),
-            Vocabulary(spelling: "provider", description: "공급하다 appleappleap pleapple appleapple appleappleapple"),
-            Vocabulary(spelling: "save", description: "저장하다"),
-            Vocabulary(spelling: "book", description: "책"),
-            Vocabulary(spelling: "cup", description: "컵"),
-            Vocabulary(spelling: "design", description: "디자인"),
-        ]
-            .randomElement() ?? Vocabulary(spelling: "", description: "")
+        self.starCount = 1
     }
     
     public static func ==(lhs: Vocabulary, rhs: Vocabulary) -> Bool {

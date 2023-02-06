@@ -22,12 +22,12 @@ final class VocabularyViewReactor: Reactor {
     
     enum Mutation {
         case setRefreshing(Bool)
-        case updateVocabularies([Vocabulary])
+        case updateVocabularies(VocabularyResponse)
         case updateSections([VocabularySection])
     }
     
     struct State {
-        var sections: [VocabularySection] = []
+        @Pulse var sections: [VocabularySection] = []
         @Pulse var isRefreshing: Bool = false
     }
     
@@ -35,13 +35,7 @@ final class VocabularyViewReactor: Reactor {
     
     let vocabularyService: VocabularyServiceType
     
-    private var vocabularies: [Vocabulary] = [
-        Vocabulary.random(),
-        Vocabulary.random(),
-        Vocabulary.random(),
-        Vocabulary.random(),
-        Vocabulary.random(),
-    ]
+    private var vocabularies: [Vocabulary] = []
     
     // MARK: Initializing
     
@@ -86,8 +80,8 @@ final class VocabularyViewReactor: Reactor {
             case .updateSections(let sections):
                 state.sections = sections
                 
-            case .updateVocabularies(let vocabularies):
-                self.vocabularies = vocabularies
+            case .updateVocabularies(let response):
+                vocabularies = response.items
                 state.sections = [generateVocabularySection()]
         }
         

@@ -9,14 +9,26 @@ import UIKit
 
 import RxSwift
 
+/*
+ BaseViewController
+ - setupProperty()
+    - 프로퍼티 관련 - label.font, ...
+ - setupDelegate()
+    - 델리게이트 패턴 관련 - bodyView.delegate = self, ...
+ */
 
-open class BaseViewController: UIViewController {
+protocol BaseViewControllerProtocol: AnyObject {
+    func setupProperty()
+    func setupDelegate()
+}
+
+open class BaseViewController: UIViewController, BaseViewControllerProtocol {
 
     public var disposeBag = DisposeBag()
     
     // MARK: Properties
     
-    var safeAreaInsets: UIEdgeInsets {
+    public var safeAreaInsets: UIEdgeInsets {
         get {
             if #available(iOS 11.0, *) {
                 guard let window = UIApplication.shared.windows.first else {
@@ -48,15 +60,10 @@ open class BaseViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
 
-        addViews()
-        setupViews()
+        setupProperty()
+        setupDelegate()
     }
     
-    open func addViews() {
-        
-    }
-
-    open func setupViews() {
-        
-    }
+    open func setupProperty() {}
+    open func setupDelegate() {}
 }

@@ -9,11 +9,11 @@
 import Foundation
 import CoreData
 
-public protocol VocabularyStore {
-    func fetchVocabularies() -> [Vocabulary]
+public protocol VocabularyRepositoryType {
+    func fetchVocabularies() -> VocabularyResponse
 }
 
-public class VocabularyRepository: VocabularyStore {
+public class VocabularyRepository: VocabularyRepositoryType {
     
     private let coreDataManager: CoreDataManager
     
@@ -21,7 +21,7 @@ public class VocabularyRepository: VocabularyStore {
         self.coreDataManager = coreDataManager
     }
     
-    public func fetchVocabularies() -> [Vocabulary] {
+    public func fetchVocabularies() -> VocabularyResponse {
         let request: NSFetchRequest<VocabulayEntity> = VocabulayEntity.fetchRequest()
         var fetchedResult: [VocabulayEntity] = []
         
@@ -31,8 +31,23 @@ public class VocabularyRepository: VocabularyStore {
             print("Error fetching vocabularies \(error)")
         }
         
-        return fetchedResult.map {
+        let items: [Vocabulary] = fetchedResult.map {
             Vocabulary(spelling: $0.title, description: $0.subtitle)
+        }
+        let count = fetchVocabulayCount()
+        let hasNext = count >= items.count
+        
+        return VocabularyResponse(items: items, count: count, hasNext: hasNext)
+    }
+    
+    private func fetchVocabulayCount() -> Int {
+        let request: NSFetchRequest<VocabulayEntity> = VocabulayEntity.fetchRequest()
+        do {
+            let count = try coreDataManager.persistentContainer.viewContext.count(for: request)
+            return count
+        } catch {
+            print(error)
+            return 0
         }
     }
     

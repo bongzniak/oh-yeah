@@ -12,23 +12,23 @@ import Moya
 import RxSwift 
 
 public protocol VocabularyServiceType {
-    func fetchVocabularies() -> Observable<[Vocabulary]>
+    func fetchVocabularies() -> Observable<VocabularyResponse>
 }
 
 public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
     
-    private let vocalbularyStore: VocabularyStore
+    private let vocalbularyStore: VocabularyRepositoryType
     
-    public init(vocalbularyStore: VocabularyStore) {
+    public init(vocalbularyStore: VocabularyRepositoryType) {
         self.vocalbularyStore = vocalbularyStore
     }
     
-    public func fetchVocabularies() -> Observable<[Vocabulary]> {
-        return Observable<[Vocabulary]>.create { [weak self] observer in
+    public func fetchVocabularies() -> Observable<VocabularyResponse> {
+        return Observable<VocabularyResponse>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
             
-            let vocabularies = self.vocalbularyStore.fetchVocabularies()
-            observer.onNext(vocabularies)
+            let response = self.vocalbularyStore.fetchVocabularies()
+            observer.onNext(response)
             observer.onCompleted()
             
             return Disposables.create()

@@ -62,6 +62,16 @@ final class VocabularyViewController: BaseViewController, View {
         reactor?.action.onNext(.fetch)
     }
     
+    // MARK: Setup
+    
+    override func setupProperty() {
+        super.setupProperty()
+    }
+    
+    override func setupDelegate() {
+        super.setupDelegate()
+    }
+    
     // MARK: Binding
     
     func bind(reactor: Reactor) {
@@ -90,7 +100,7 @@ final class VocabularyViewController: BaseViewController, View {
 }
 
 extension VocabularyViewController: VocabularyViewDelegate {
-    func sentenceButtonDidTap(_ vocabulary: Vocabulary) {
+    func vocabularyCellDidTap(_ vocabulary: Vocabulary) {
         reactor?.action.onNext(.updateVocabulary(vocabulary))
     }
 }

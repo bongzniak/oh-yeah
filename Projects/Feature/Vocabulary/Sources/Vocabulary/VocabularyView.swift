@@ -20,7 +20,7 @@ import Core
 import DesignSystem
 
 protocol VocabularyViewDelegate: AnyObject {
-    func sentenceButtonDidTap(_ vocabulary: Vocabulary)
+    func vocabularyCellDidTap(_ vocabulary: Vocabulary)
 }
 
 final class VocabularyView: BaseView {
@@ -81,37 +81,37 @@ final class VocabularyView: BaseView {
         
         dataSource = dataSourceFactory()
         
-        bind()
+        setupBind()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - UI Setup
+    // MARK: - Setup
     
-    override func addViews() {
-        super.addViews()
-
-        addSubview(collectionView)
-    }
-    
-    override func setupViews() {
-        super.setupViews()
-
+    override func setupProperty() {
+        super.setupProperty()
+        
         collectionView.refreshControl = refreshControl
         collectionView.register(cellType: VocabularyCell.self)
     }
-
-    override func setupConstraints() {
-        super.setupConstraints()
-
+    
+    override func setupHierarchy() {
+        super.setupHierarchy()
+        
+        addSubview(collectionView)
+    }
+    
+    override func setupLayout() {
+        super.setupLayout()
+        
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(safeAreaLayoutGuide)
         }
     }
     
-    private func bind() {
+    func setupBind() {
         collectionView.rx.setDelegate(self)
             .disposed(by: self.disposeBag)
         
@@ -150,8 +150,9 @@ extension VocabularyView {
         cell.rx.tap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
-                guard let vocabulary = cell.reactor?.currentState.vocabulary else { return }
-                owner.delegate?.sentenceButtonDidTap(vocabulary)
+                guard var vocabulary = cell.reactor?.currentState.vocabulary else { return }
+                vocabulary.isExpand.toggle()
+                owner.delegate?.vocabularyCellDidTap(vocabulary)
             }
             .disposed(by: cell.disposeBag)
     }

@@ -22,6 +22,8 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
     typealias Reactor = VocabularyCellReactor
     
+    // MARK: Constant
+    
     private enum Metric {
         static let cornerRadius: CGFloat = 8
         static let padding: CGFloat = 8
@@ -61,12 +63,12 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
     private enum Image {
         static let speaker: UIImage? = UIImage(systemName: "speaker.wave.3")?
-            .withTintColor(.gray10, renderingMode: .alwaysOriginal)
+            .withTintColor(.blue6, renderingMode: .alwaysOriginal)
         static let speakerFill: UIImage? = UIImage(systemName: "speaker.wave.3.fill")?
-            .withTintColor(.gray10, renderingMode: .alwaysOriginal)
+            .withTintColor(.blue6, renderingMode: .alwaysOriginal)
         static let starFill: UIImage? = UIImage(systemName: "star.fill")?
             .withTintColor(.gray10, renderingMode: .alwaysOriginal)
-            .withConfiguration(UIImage.SymbolConfiguration(font: .regular(ofSize: 8)))
+            .withConfiguration(UIImage.SymbolConfiguration(font: .regular(ofSize: 10)))
     }
     
     private enum Localized {
@@ -78,6 +80,7 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     private let ttsManager: TTSManager = TTSManager.shared
     
     // MARK: UI Views
+    
     let starImageStackView: UIStackView = UIStackView().then {
         $0.alignment = .fill
         $0.distribution = .fill
@@ -126,8 +129,19 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
     
     // MARK: UI Setup
     
-    override func addViews() {
-        super.addViews()
+    override func setupProperty() {
+        super.setupProperty()
+        
+        contentView.layer.cornerRadius = Metric.cornerRadius
+        contentView.backgroundColor = Color.background
+    }
+    
+    override func setupDelegate() {
+        super.setupDelegate()
+    }
+    
+    override func setupHierarchy() {
+        super.setupHierarchy()
         
         contentView.addSubview(starImageStackView)
         
@@ -138,23 +152,16 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
         
         contentView.addSubview(groupLabel)
         contentView.addSubview(speakerButton)
-    }
-    
-    override func setupViews() {
-        super.setupViews()
         
-        contentView.layer.cornerRadius = Metric.cornerRadius
-        contentView.backgroundColor = Color.background
     }
     
-    override func setupConstraints() {
-        super.setupConstraints()
+    override func setupLayout() {
+        super.setupLayout()
         
         starImageStackView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(Metric.StarImageStackView.margin.top)
             $0.leading.equalToSuperview().inset(Metric.padding)
         }
-        
         labelStackView.snp.makeConstraints {
             $0.top.equalTo(starImageStackView.snp.bottom).offset(Metric.LabelStackView.margin.top)
             $0.leading.trailing.equalToSuperview().inset(Metric.padding)
@@ -225,13 +232,20 @@ final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
             .drive(sentenceLabel.rx.isHidden)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.vocabulary.starCount }
+        reactor.state.map { $0.vocabulary.starCount - 1 }
             .distinctUntilChanged()
+            .filter { $0 >= 0 }
             .asDriver(onErrorJustReturn: 0)
             .drive(with: self) { owner, starCound in
                 owner.removeStartImageStackViewSubviews()
                 owner.addArrangedStarImageStackViews(count: starCound)
             }
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.vocabulary.group }
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: "")
+            .drive(groupLabel.rx.text)
             .disposed(by: disposeBag)
     }
     
@@ -288,12 +302,12 @@ extension VocabularyCell {
         vocabulary: Vocabulary
     ) -> CGSize {
         let contentWidth = width - Metric.padding
-        var height: CGFloat = 0
+        var height: CGFloat = Metric.StarImageStackView.margin.top
         
         // StarStackView
-        
-        height += Metric.StarImageStackView.margin.top
-        height += Image.starFill?.size.height ?? 0
+        if vocabulary.starCount > 0 {
+            height += Image.starFill?.size.height ?? 0
+        }
         
         // SpellingLabel
         

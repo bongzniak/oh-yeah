@@ -63,7 +63,7 @@ final class CompositionRoot {
 //
 //        }
         
-        let navigationController: UINavigationController = BaseNavigationController()
+        let navigationController: UINavigationController = UINavigationController()
         window.rootViewController = navigationController
         
         let splashCoordinator = SplashCoordinator(navigationController: navigationController)
