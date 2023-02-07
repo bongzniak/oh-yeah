@@ -13,7 +13,7 @@ public protocol VocabularyRepositoryType {
     func fetchVocabularies() -> VocabularyResponse
 }
 
-public class VocabularyRepository: VocabularyRepositoryType {
+public class VocabularyCoreDataRepository: VocabularyRepositoryType {
     
     private let coreDataManager: CoreDataManager
     
@@ -51,13 +51,13 @@ public class VocabularyRepository: VocabularyRepositoryType {
         }
     }
     
-    public func saveVocabulary(vocabulary: Vocabulary) -> VocabulayEntity {
-        let test = VocabulayEntity(context: coreDataManager.persistentContainer.viewContext)
-        test.title = vocabulary.spelling
-        test.subtitle = vocabulary.description
-        
-        coreDataManager.saveContext()
-        
-        return test
-    }
+//    public func saveVocabulary(vocabulary: Vocabulary) -> VocabulayEntity {
+//        let test = VocabulayEntity(context: coreDataManager.persistentContainer.viewContext)
+//        test.title = vocabulary.spelling
+//        test.subtitle = vocabulary.description
+//        
+//        coreDataManager.saveContext()
+//        
+//        return test
+//    }
 }

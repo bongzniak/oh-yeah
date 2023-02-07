@@ -17,17 +17,17 @@ public protocol VocabularyServiceType {
 
 public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
     
-    private let vocalbularyStore: VocabularyRepositoryType
+    private let repository: VocabularyRepositoryType
     
-    public init(vocalbularyStore: VocabularyRepositoryType) {
-        self.vocalbularyStore = vocalbularyStore
+    public init(repository: VocabularyRepositoryType) {
+        self.repository = repository
     }
     
     public func fetchVocabularies() -> Observable<VocabularyResponse> {
         return Observable<VocabularyResponse>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
             
-            let response = self.vocalbularyStore.fetchVocabularies()
+            let response = self.repository.fetchVocabularies()
             observer.onNext(response)
             observer.onCompleted()
             
