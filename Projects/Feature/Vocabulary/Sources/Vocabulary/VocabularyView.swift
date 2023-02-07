@@ -35,9 +35,9 @@ final class VocabularyView: BaseView {
         enum CollectionView {
             static let contentInset: UIEdgeInsets = UIEdgeInsets(
                 top: 12,
-                left: 24,
+                left: 12,
                 bottom: 12,
-                right: 24
+                right: 12
             )
         }
     }

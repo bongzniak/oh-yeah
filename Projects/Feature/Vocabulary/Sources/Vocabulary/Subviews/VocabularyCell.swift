@@ -206,12 +206,6 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
             .drive(spellingLabel.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.vocabulary.description }
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: "")
-            .drive(descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-        
         reactor.state.map { $0.isShowDescription }
             .distinctUntilChanged()
             .map { !$0 }
@@ -219,10 +213,10 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
             .drive(descriptionLabel.rx.isHidden)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.vocabulary.sentence }
+        reactor.state.map { $0.vocabulary.description }
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
-            .drive(sentenceLabel.rx.text)
+            .drive(descriptionLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.isShowSentence }
@@ -230,6 +224,12 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
             .map { !$0 }
             .asDriver(onErrorJustReturn: true)
             .drive(sentenceLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.vocabulary.sentence }
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: "")
+            .drive(sentenceLabel.rx.text)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.vocabulary.starCount - 1 }
@@ -250,8 +250,8 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
     }
     
     private func removeStartImageStackViewSubviews() {
-        for view in starImageStackView.subviews {
-            starImageStackView.removeArrangedSubview(view)
+        for view in starImageStackView.arrangedSubviews {
+            view.removeFromSuperview()
         }
     }
     
