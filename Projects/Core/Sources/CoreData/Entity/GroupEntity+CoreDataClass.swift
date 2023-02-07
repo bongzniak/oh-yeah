@@ -1,5 +1,5 @@
 //
-//  VocabulayEntity+CoreDataClass.swift
+//  GroupEntity+CoreDataClass.swift
 //  Core
 //
 //  Created by bongzniak on 2023/02/07.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(VocabulayEntity)
-public class VocabulayEntity: GroupEntity {
+@objc(GroupEntity)
+public class GroupEntity: NSManagedObject {
 
 }

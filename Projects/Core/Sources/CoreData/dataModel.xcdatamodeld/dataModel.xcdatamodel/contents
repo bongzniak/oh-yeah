@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22A400" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GroupEntity" representedClassName="GroupEntity" syncable="YES">
+        <attribute name="groupID" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+    </entity>
     <entity name="VocabulayEntity" representedClassName="VocabulayEntity" syncable="YES">
-        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="desc" attributeType="String"/>
+        <attribute name="section" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="sentence" optional="YES" attributeType="String"/>
-        <attribute name="subtitle" attributeType="String"/>
-        <attribute name="title" attributeType="String"/>
+        <attribute name="spelling" attributeType="String"/>
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="vocabularyID" attributeType="String"/>
     </entity>
 </model>
