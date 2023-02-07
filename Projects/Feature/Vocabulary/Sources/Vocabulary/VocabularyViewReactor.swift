@@ -61,18 +61,15 @@ final class VocabularyViewReactor: Reactor {
                 ])
                 
             case .shuffle:
-                return .just(.updateSections([
-                    generateVocabularySection(vocabularies: self.vocabularies.shuffled())
-                ]))
+                self.vocabularies = self.vocabularies.shuffled()
+                return .just(.updateSections([generateVocabularySection()]))
                 
             case .updateVocabulary(let vocabulaty):
                 if let index = vocabularies.firstIndex(where: { $0 == vocabulaty }) {
                     vocabularies[index] = vocabulaty
                 }
                 
-                return .just(.updateSections([
-                    generateVocabularySection(vocabularies: self.vocabularies)
-                ]))
+                return .just(.updateSections([generateVocabularySection()]))
         }
     }
     
@@ -90,7 +87,7 @@ final class VocabularyViewReactor: Reactor {
                 
             case .updateVocabularies(let response):
                 vocabularies = response.items
-                state.sections = [generateVocabularySection(vocabularies: vocabularies)]
+                state.sections = [generateVocabularySection()]
         }
         
         return state
@@ -106,7 +103,7 @@ extension VocabularyViewReactor {
             }
     }
     
-    private func generateVocabularySection(vocabularies: [Vocabulary]) -> VocabularySection {
+    private func generateVocabularySection() -> VocabularySection {
         .section(
             vocabularies.map { vocabulary -> VocabularySection.Item in
                     .vocabulary(vocabulary)
