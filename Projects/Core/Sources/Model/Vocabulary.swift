@@ -30,10 +30,10 @@ public struct Vocabulary: Hashable, Equatable {
         self.spelling = spelling
         self.description = description
         self.sentence = "He risked his life to save her."
-        self.starCount = 1
+        self.starCount = (0...3).randomElement() ?? 1
     }
     
-    public static func ==(lhs: Vocabulary, rhs: Vocabulary) -> Bool {
+    public static func == (lhs: Vocabulary, rhs: Vocabulary) -> Bool {
         lhs.spelling == rhs.spelling
     }
 }

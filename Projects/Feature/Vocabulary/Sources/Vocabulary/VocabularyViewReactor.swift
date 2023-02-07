@@ -17,6 +17,7 @@ final class VocabularyViewReactor: Reactor {
     enum Action {
         case fetch
         case refresh
+        case shuffle
         case updateVocabulary(Vocabulary)
     }
     
@@ -59,12 +60,19 @@ final class VocabularyViewReactor: Reactor {
                     .just(.setRefreshing(false))
                 ])
                 
+            case .shuffle:
+                return .just(.updateSections([
+                    generateVocabularySection(vocabularies: self.vocabularies.shuffled())
+                ]))
+                
             case .updateVocabulary(let vocabulaty):
                 if let index = vocabularies.firstIndex(where: { $0 == vocabulaty }) {
                     vocabularies[index] = vocabulaty
                 }
                 
-                return .just(.updateSections([generateVocabularySection()]))
+                return .just(.updateSections([
+                    generateVocabularySection(vocabularies: self.vocabularies)
+                ]))
         }
     }
     
@@ -82,7 +90,7 @@ final class VocabularyViewReactor: Reactor {
                 
             case .updateVocabularies(let response):
                 vocabularies = response.items
-                state.sections = [generateVocabularySection()]
+                state.sections = [generateVocabularySection(vocabularies: vocabularies)]
         }
         
         return state
@@ -98,7 +106,7 @@ extension VocabularyViewReactor {
             }
     }
     
-    private func generateVocabularySection() -> VocabularySection {
+    private func generateVocabularySection(vocabularies: [Vocabulary]) -> VocabularySection {
         .section(
             vocabularies.map { vocabulary -> VocabularySection.Item in
                     .vocabulary(vocabulary)

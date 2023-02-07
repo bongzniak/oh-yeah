@@ -22,12 +22,23 @@ public final class VocabularyCoordinator: Coordinator {
     }
     
     public func start() {
-        navigationController.pushViewController(getViewController(), animated: false)
+        let viewController = VocabularyViewController.instance()
+        viewController.coordinator = self
+        navigationController.viewControllers = [viewController]
+    }
+    
+    public func pushToSaveVocabulary() {
+        let coordinator = SaveVocabularyCoordinator(
+            navigationController: navigationController
+        )
+        coordinator.start()
     }
 }
 
 private extension VocabularyCoordinator {
-    func getViewController() -> VocabularyViewController {
-        VocabularyViewController.instance()
+    private func getViewController() -> VocabularyViewController {
+        return VocabularyViewController.instance().then {
+            $0.coordinator = self
+        }
     }
 }

@@ -12,7 +12,6 @@ import ReactorKit
 import RxCocoa
 import RxSwift
 
-// Module
 import Core
 
 final class VocabularyViewController: BaseViewController, View {
@@ -21,7 +20,7 @@ final class VocabularyViewController: BaseViewController, View {
     
     // MARK: Properties
 
-    private weak var coordinator: VocabularyCoordinator?
+    weak var coordinator: VocabularyCoordinator?
     
     // MARK: UI
     
@@ -83,6 +82,20 @@ final class VocabularyViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: self.disposeBag)
         
+        self.bodyView.plusActionButton.rx.tap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, _ in
+                owner.coordinator?.pushToSaveVocabulary()
+            }
+            .disposed(by: disposeBag)
+        
+        self.bodyView.shuffleActionButton.rx.tap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, _ in
+                owner.reactor?.action.onNext(.shuffle)
+            }
+            .disposed(by: disposeBag)
+        
         // State
         
         reactor.state.map { $0.sections }
@@ -110,7 +123,7 @@ extension VocabularyViewController {
         VocabularyViewController(
             reactor: VocabularyViewReactor(
                 vocabularyService: VocabularyCoreDataService(
-                    vocalbularyStore: VocabularyRepository(coreDataManager: CoreDataManager.shared)
+                    repository: VocabularyCoreDataRepository(coreDataManager: CoreDataManager.shared)
                 )
             ),
             bodyView: VocabularyView.instance()

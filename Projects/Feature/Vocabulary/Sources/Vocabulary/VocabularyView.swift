@@ -17,7 +17,6 @@ import Then
 import Reusable
 
 import Core
-import DesignSystem
 
 protocol VocabularyViewDelegate: AnyObject {
     func vocabularyCellDidTap(_ vocabulary: Vocabulary)
@@ -72,6 +71,14 @@ final class VocabularyView: BaseView {
         $0.contentInset = Metric.CollectionView.contentInset
     }
     
+    let shuffleActionButton: UIButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "shuffle"), for: .normal)
+    }
+    
+    let plusActionButton: UIButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+    }
+    
     // MARK: Initializing
     
     override init() {
@@ -95,12 +102,20 @@ final class VocabularyView: BaseView {
         
         collectionView.refreshControl = refreshControl
         collectionView.register(cellType: VocabularyCell.self)
+        
+        shuffleActionButton.backgroundColor = .blue1
+        shuffleActionButton.layer.cornerRadius = 22
+        
+        plusActionButton.backgroundColor = .blue4
+        plusActionButton.layer.cornerRadius = 22
     }
     
     override func setupHierarchy() {
         super.setupHierarchy()
         
         addSubview(collectionView)
+        addSubview(shuffleActionButton)
+        addSubview(plusActionButton)
     }
     
     override func setupLayout() {
@@ -108,6 +123,19 @@ final class VocabularyView: BaseView {
         
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(safeAreaLayoutGuide)
+        }
+        
+        shuffleActionButton.snp.makeConstraints {
+            $0.trailing.equalTo(plusActionButton)
+            $0.bottom.equalTo(plusActionButton.snp.top).offset(-6)
+            $0.width.equalTo(44)
+            $0.height.equalTo(44)
+        }
+        
+        plusActionButton.snp.makeConstraints {
+            $0.trailing.bottom.equalTo(safeAreaLayoutGuide).inset(10)
+            $0.width.equalTo(44)
+            $0.height.equalTo(44)
         }
     }
     

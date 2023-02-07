@@ -18,7 +18,7 @@ import Reusable
 import Core
 import DesignSystem
 
-final class VocabularyCell: BaseCollectionViewCell, ReactorKit.View, Reusable {
+final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
     
     typealias Reactor = VocabularyCellReactor
     
