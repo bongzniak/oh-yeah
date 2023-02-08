@@ -13,7 +13,6 @@ import Core
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    var coordinator: Coordinator?
     
     func application(
         _ application: UIApplication,
@@ -25,8 +24,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationViewController
         window?.makeKeyAndVisible()
         
-        coordinator = GroupCoordinator(navigationController: navigationViewController)
-        coordinator?.start()
+        let coordinator = GroupCoordinator(navigationController: navigationViewController)
+        coordinator.start()
         
         return true
     }

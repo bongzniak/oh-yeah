@@ -39,15 +39,18 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
 
     let initialState: State
     
+    let coordinator: SaveVocabularyCoordinator
     let vocabularyService: VocabularyServiceType
 
     // MARK: Initializing
     
     init(
+        coordinator: SaveVocabularyCoordinator,
         groupID: String?,
         vocabularyID: String?,
         vocabularyService: VocabularyServiceType
     ) {
+        self.coordinator = coordinator
         self.vocabularyService = vocabularyService
         
         initialState = State(

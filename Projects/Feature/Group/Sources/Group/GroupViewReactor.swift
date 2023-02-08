@@ -33,6 +33,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
         var isRefreshing: Bool = false
     }
     
+    let coordinator: GroupCoordinator
     let groupService: GroupServiceType
     
     let initialState: State
@@ -45,10 +46,12 @@ final class GroupViewReactor: BaseReactor, Reactor {
     // MARK: Initializing
     
     init(
+        coordinator: GroupCoordinator,
         groupService: GroupServiceType,
         selectMode: SelectMode,
         selectedIDs: Set<String>
     ) {
+        self.coordinator = coordinator
         self.groupService = groupService
         self.selectMode = selectMode
         self.selectedIDs = selectedIDs
@@ -56,6 +59,10 @@ final class GroupViewReactor: BaseReactor, Reactor {
         initialState = State()
         
         super.init()
+    }
+    
+    deinit {
+        
     }
     
     // MARK: Mutate

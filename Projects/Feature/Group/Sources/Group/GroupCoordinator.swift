@@ -30,12 +30,16 @@ public final class GroupCoordinator: Coordinator {
         self.navigationController = navigationController
     }
     
+    deinit {
+        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+    }
+    
     public func start() {
         let viewController = GroupViewController.instance(
+            coordinator: self,
             selectMode: .single,
             selectedIDs: []
         )
-        viewController.coordinator = self
         
         navigationController.pushViewController(viewController, animated: true)
     }

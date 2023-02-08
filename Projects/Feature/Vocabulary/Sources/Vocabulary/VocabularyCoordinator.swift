@@ -24,17 +24,18 @@ public final class VocabularyCoordinator: Coordinator {
         self.navigationController = navigationController
     }
     
+    deinit {
+        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+    }
+    
     public func start() {
-        let viewController = VocabularyViewController.instance()
-        viewController.coordinator = self
-        // navigationController.viewControllers = [viewController]
+        let viewController = VocabularyViewController.instance(coordinator: self)
         navigationController.pushViewController(viewController, animated: true)
     }
     
     public func pushToSaveVocabulary() {
         let coordinator = SaveVocabularyCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
-        addChild(coordinator)
         
         coordinator.start()
     }
@@ -42,16 +43,7 @@ public final class VocabularyCoordinator: Coordinator {
     public func pushToGroup() {
         let coordinator = GroupCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
-        addChild(coordinator)
         
         coordinator.start()
-    }
-}
-
-private extension VocabularyCoordinator {
-    private func getViewController() -> VocabularyViewController {
-        return VocabularyViewController.instance().then {
-            $0.coordinator = self
-        }
     }
 }

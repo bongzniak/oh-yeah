@@ -21,8 +21,6 @@ final class GroupViewController: BaseViewController, View {
     
     // MARK: Properties
 
-    weak var coordinator: GroupCoordinator?
-    
     // MARK: UI
     
     let backBarButton: UIBarButtonItem = UIBarButtonItem(
@@ -71,7 +69,7 @@ final class GroupViewController: BaseViewController, View {
         
         reactor?.action.onNext(.fetch(keyword: ""))
         
-        coordinator?.delegate = self
+        reactor?.coordinator.delegate = self
     }
     
     // MARK: Setup
@@ -112,7 +110,7 @@ final class GroupViewController: BaseViewController, View {
         bodyView.plusActionButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
-                owner.coordinator?.presentCreateGroup(
+                owner.reactor?.coordinator.presentCreateGroup(
                     title: "asdasd",
                     message: "message",
                     okTitle: "ok",
@@ -156,11 +154,13 @@ final class GroupViewController: BaseViewController, View {
 
 extension GroupViewController {
     class func instance(
+        coordinator: GroupCoordinator,
         selectMode: SelectMode,
         selectedIDs: Set<String>
     ) -> GroupViewController {
         GroupViewController(
             reactor: GroupViewReactor(
+                coordinator: coordinator,
                 groupService: GroupCoreDataService(
                     repository: GroupCoreDataRepository(coreDataManager: CoreDataManager.shared)
                 ),

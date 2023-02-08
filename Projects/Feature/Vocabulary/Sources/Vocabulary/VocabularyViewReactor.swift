@@ -34,13 +34,18 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     
     let initialState: State
     
+    let coordinator: VocabularyCoordinator
     let vocabularyService: VocabularyServiceType
     
     private var vocabularies: [Vocabulary] = []
     
     // MARK: Initializing
     
-    init(vocabularyService: VocabularyServiceType) {
+    init(
+        coordinator: VocabularyCoordinator,
+        vocabularyService: VocabularyServiceType
+    ) {
+        self.coordinator = coordinator
         self.vocabularyService = vocabularyService
         
         initialState = State()

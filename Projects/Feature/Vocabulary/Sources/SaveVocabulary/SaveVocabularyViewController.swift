@@ -21,8 +21,6 @@ final class SaveVocabularyViewController: BaseViewController, View {
     
     // MARK: Properties
 
-    weak var coordinator: SaveVocabularyCoordinator?
-    
     // MARK: UI
     
     let closeBarButton = UIBarButtonItem(
@@ -105,7 +103,7 @@ final class SaveVocabularyViewController: BaseViewController, View {
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 // owner.reactor?.action.onNext(.save)
-                owner.coordinator?.pushToGroup(selectMode: .multiple,selectIDs: [])
+                owner.reactor?.coordinator.pushToGroup(selectMode: .multiple,selectIDs: [])
             }
             .disposed(by: disposeBag)
         
@@ -190,9 +188,10 @@ final class SaveVocabularyViewController: BaseViewController, View {
 }
 
 extension SaveVocabularyViewController {
-    class func instance() -> SaveVocabularyViewController {
+    class func instance(coordinator: SaveVocabularyCoordinator) -> SaveVocabularyViewController {
         SaveVocabularyViewController(
             reactor: SaveVocabularyViewReactor(
+                coordinator: coordinator,
                 groupID: nil,
                 vocabularyID: nil,
                 vocabularyService: VocabularyCoreDataService(

@@ -25,20 +25,21 @@ public final class SaveVocabularyCoordinator: Coordinator {
         self.navigationController = navigationController
     }
     
+    deinit {
+        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+    }
+    
     public func start() {
-        let viewController = SaveVocabularyViewController.instance()
-        viewController.coordinator = self
-        
-        let navigation = UINavigationController(rootViewController: viewController)
-        navigation.modalPresentationStyle = .fullScreen
-        
-        navigationController.present(navigation, animated: true)
+        let viewController = SaveVocabularyViewController.instance(coordinator: self)
+        navigationController.present(
+            UINavigationController(rootViewController: viewController),
+            animated: true
+        )
     }
     
     public func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>) {
-        let coordinator = GroupCoordinator(navigationController: navigationController)
+        let coordinator = GroupCoordinator(navigationController: self.navigationController)
         coordinator.parentCoordinator = self
-        addChild(coordinator)
         
         coordinator.start()
     }

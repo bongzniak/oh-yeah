@@ -20,8 +20,6 @@ final class VocabularyViewController: BaseViewController, View {
     
     // MARK: Properties
 
-    weak var coordinator: VocabularyCoordinator?
-    
     // MARK: UI
     
     let bodyView: VocabularyView
@@ -85,7 +83,7 @@ final class VocabularyViewController: BaseViewController, View {
         self.bodyView.plusActionButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
-                owner.coordinator?.pushToSaveVocabulary()
+                owner.reactor?.coordinator.pushToSaveVocabulary()
             }
             .disposed(by: disposeBag)
         
@@ -123,9 +121,10 @@ extension VocabularyViewController: VocabularyViewDelegate {
 // MARK: VocabularyViewController
 
 extension VocabularyViewController {
-    class func instance() -> VocabularyViewController {
+    class func instance(coordinator: VocabularyCoordinator) -> VocabularyViewController {
         VocabularyViewController(
             reactor: VocabularyViewReactor(
+                coordinator: coordinator,
                 vocabularyService: VocabularyCoreDataService(
                     repository: VocabularyCoreDataRepository(coreDataManager: CoreDataManager.shared)
                 )
