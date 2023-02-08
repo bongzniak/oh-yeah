@@ -188,7 +188,7 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
     }
     
     private func bindAction(reactor: Reactor) {
-        speakerButton.rx.tap
+        speakerButton.rx.throttleTap
             .map {
                 reactor.currentState.vocabulary.spelling
             }

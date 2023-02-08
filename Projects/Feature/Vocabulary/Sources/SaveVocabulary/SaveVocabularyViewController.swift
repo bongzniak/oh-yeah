@@ -93,21 +93,21 @@ final class SaveVocabularyViewController: BaseViewController, View {
     }
     
     private func bindAction(reactor: Reactor) {
-        closeBarButton.rx.tap
+        closeBarButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 owner.navigationController?.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
-        saveBarButton.rx.tap
+        saveBarButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 owner.reactor?.action.onNext(.save)
             }
             .disposed(by: disposeBag)
         
-        bodyView.searchSententButton.rx.tap
+        bodyView.searchSententButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 let spelling = owner.bodyView.spellingTextView.text

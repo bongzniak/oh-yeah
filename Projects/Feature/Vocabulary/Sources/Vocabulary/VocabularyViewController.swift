@@ -82,14 +82,14 @@ final class VocabularyViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: self.disposeBag)
         
-        self.bodyView.plusActionButton.rx.tap
+        self.bodyView.plusActionButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 owner.coordinator?.pushToSaveVocabulary()
             }
             .disposed(by: disposeBag)
         
-        self.bodyView.shuffleActionButton.rx.tap
+        self.bodyView.shuffleActionButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 owner.reactor?.action.onNext(.shuffle)
@@ -112,11 +112,15 @@ final class VocabularyViewController: BaseViewController, View {
     }
 }
 
+// MARK: VocabularyViewDelegate
+
 extension VocabularyViewController: VocabularyViewDelegate {
     func vocabularyCellDidTap(_ vocabulary: Vocabulary) {
         reactor?.action.onNext(.update(vocabulary))
     }
 }
+
+// MARK: VocabularyViewController
 
 extension VocabularyViewController {
     class func instance() -> VocabularyViewController {

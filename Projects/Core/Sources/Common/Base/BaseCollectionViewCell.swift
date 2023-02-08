@@ -54,7 +54,8 @@ open class BaseCollectionViewCell: UICollectionViewCell, BaseViewProtocol {
 }
 
 extension Reactive where Base: BaseCollectionViewCell {
-    public var tap: ControlEvent<Void> {
+    public var throttleTap: Observable<Void> {
         return ControlEvent(events: base.tapGesture.rx.event.map { _ in () })
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
     }
 }

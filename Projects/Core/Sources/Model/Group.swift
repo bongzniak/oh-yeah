@@ -11,10 +11,12 @@ import Foundation
 public struct Group: Hashable {
     public let id: String
     public let name: String
+    public let count: Int
     
-    public init(id: String, name: String) {
+    public init(id: String, name: String, count: Int) {
         self.id = id
         self.name = name
+        self.count = count
     }
     
     public init?(groupEntity: GroupEntity?) {
@@ -22,5 +24,6 @@ public struct Group: Hashable {
         
         self.id = groupEntity.id
         self.name = groupEntity.name
+        self.count = 0
     }
 }

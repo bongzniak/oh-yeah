@@ -28,9 +28,7 @@ final class VocabularyView: BaseView {
     
     private enum Metric {
         static var cellWidth: CGFloat {
-            UIScreen.main.bounds.width
-            - Metric.CollectionView.contentInset.left
-            - Metric.CollectionView.contentInset.right
+            UIScreen.main.bounds.width - Metric.CollectionView.contentInset.horizontal
         }
         enum CollectionView {
             static let contentInset: UIEdgeInsets = UIEdgeInsets(
@@ -175,7 +173,7 @@ extension VocabularyView {
     }
     
     private func cellBind(_ cell: VocabularyCell) {
-        cell.rx.tap
+        cell.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 guard var vocabulary = cell.reactor?.currentState.vocabulary else { return }

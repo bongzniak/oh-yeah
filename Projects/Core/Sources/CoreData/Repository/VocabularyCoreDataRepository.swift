@@ -43,11 +43,6 @@ public class VocabularyCoreDataRepository: VocabularyRepositoryType {
             print("Error fetching vocabularies \(error)")
         }
         
-        for item in fetchedResult {
-            logger.debug("item.group >> ", item.group?.id ?? "")
-            logger.debug("item.group >> ", item.group?.name ?? "")
-        }
-        
         let items: [Vocabulary] = fetchedResult.map {
             Vocabulary(
                 id: $0.id,

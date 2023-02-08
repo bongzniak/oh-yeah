@@ -27,7 +27,7 @@ extension VocabulayEntity {
     
     public override func awakeFromInsert() {
         super.awakeFromInsert()
-        logger.debug("UUID >> ", UUID().uuidString)
+        
         id = UUID().uuidString
         spelling = ""
         desc = ""
