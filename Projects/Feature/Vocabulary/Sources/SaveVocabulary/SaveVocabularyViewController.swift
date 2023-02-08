@@ -13,6 +13,7 @@ import RxCocoa
 import RxSwift
 
 import Core
+import Group
 
 final class SaveVocabularyViewController: BaseViewController, View {
     
@@ -103,7 +104,8 @@ final class SaveVocabularyViewController: BaseViewController, View {
         saveBarButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
-                owner.reactor?.action.onNext(.save)
+                // owner.reactor?.action.onNext(.save)
+                owner.coordinator?.pushToGroup(selectMode: .multiple,selectIDs: [])
             }
             .disposed(by: disposeBag)
         
@@ -140,10 +142,10 @@ final class SaveVocabularyViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         bodyView.spellingTextView.rx.text
-            .map { $0 ?? "" }
-            .map { self.isSearchButtonEnable($0) }
-            .asDriver(onErrorJustReturn: false)
-            .drive(bodyView.searchSententButton.rx.isEnabled)
+            .asDriver(onErrorJustReturn: "")
+            .drive(with: self) { owner, text in
+                owner.bodyView.searchSententButton.isEnabled = owner.isSearchButtonEnable(text ?? "")
+            }
             .disposed(by: disposeBag)
         
         bodyView.spellingTextView.rx.text

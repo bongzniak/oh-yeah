@@ -12,7 +12,7 @@ import RxSwift
 
 import Core
 
-final class VocabularyViewReactor: Reactor {
+final class VocabularyViewReactor: BaseReactor, Reactor {
     
     enum Action {
         case fetch
@@ -44,6 +44,8 @@ final class VocabularyViewReactor: Reactor {
         self.vocabularyService = vocabularyService
         
         initialState = State()
+        
+        super.init()
     }
     
     // MARK: Mutate

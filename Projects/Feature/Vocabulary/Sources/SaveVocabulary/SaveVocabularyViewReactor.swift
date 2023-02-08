@@ -13,7 +13,7 @@ import RxSwift
 import Core
 import Foundation
 
-final class SaveVocabularyViewReactor: Reactor {
+final class SaveVocabularyViewReactor: BaseReactor, Reactor {
   
     enum Action {
         case save
@@ -57,8 +57,10 @@ final class SaveVocabularyViewReactor: Reactor {
             description: "",
             sentence: ""
         )
+        
+        super.init()
     }
-
+    
     // MARK: Mutate
 
     func mutate(action: Action) -> Observable<Mutation> {

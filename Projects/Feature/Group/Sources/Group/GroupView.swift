@@ -128,7 +128,8 @@ final class GroupView: BaseView {
         super.setupLayout()
         
         searchBar.snp.makeConstraints {
-            $0.top.leading.trailing.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(safeAreaLayoutGuide).inset(4)
         }
         collectionView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
@@ -144,14 +145,12 @@ final class GroupView: BaseView {
     
     private func bind() {
         collectionView.rx.setDelegate(self)
-            .disposed(by: self.disposeBag)
+            .disposed(by: disposeBag)
         
         sections
             .asDriver(onErrorJustReturn: [])
             .drive(collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
-        
     }
 }
 
@@ -173,9 +172,6 @@ extension GroupView {
                         self?.cellBind(cell)
                         return cell
                 }
-            },
-            canMoveItemAtIndexPath: { _, _ in
-                true
             }
         )
     }
@@ -204,8 +200,8 @@ extension GroupView: UICollectionViewDelegateFlowLayout {
     private func cellBind(_ cell: GroupCell) {
         cell.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                guard let id = cell.reactor?.currentState.id else { return }
+            .drive(with: self) { [weak cell] owner, _ in
+                guard let id = cell?.reactor?.currentState.id else { return }
                 owner.delegate?.groupCellDidTap(id: id)
             }
             .disposed(by: cell.disposeBag)

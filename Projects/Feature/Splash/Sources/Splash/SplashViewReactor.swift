@@ -10,7 +10,9 @@ import ReactorKit
 import RxCocoa
 import RxSwift
 
-final class SplashViewReactor: Reactor {
+import Core
+
+final class SplashViewReactor: BaseReactor, Reactor {
   
     enum Action {
     }
@@ -31,6 +33,8 @@ final class SplashViewReactor: Reactor {
         initialState = State()
         
         coordinator = splashCoordinator
+        
+        super.init()
     }
 
     // MARK: Mutate

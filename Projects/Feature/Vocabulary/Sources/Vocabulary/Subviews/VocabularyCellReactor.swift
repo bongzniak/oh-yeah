@@ -28,6 +28,10 @@ class VocabularyCellReactor: Reactor {
     }
     
     let initialState: State
+    
+    deinit {
+        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+    }
 
     // MARK: Initializing
     

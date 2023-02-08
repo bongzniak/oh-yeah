@@ -17,6 +17,8 @@ protocol GroupCoordinatorDelegate: AnyObject {
 
 public final class GroupCoordinator: Coordinator {
     
+    public weak var parentCoordinator: Coordinator?
+    
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     
@@ -30,11 +32,12 @@ public final class GroupCoordinator: Coordinator {
     
     public func start() {
         let viewController = GroupViewController.instance(
-            selectMode: .multiple,
+            selectMode: .single,
             selectedIDs: []
         )
         viewController.coordinator = self
-        navigationController.viewControllers = [viewController]
+        
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     public func presentCreateGroup(

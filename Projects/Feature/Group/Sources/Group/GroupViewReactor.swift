@@ -12,7 +12,7 @@ import RxSwift
 
 import Core
 
-final class GroupViewReactor: Reactor {
+final class GroupViewReactor: BaseReactor, Reactor {
     
     enum Action {
         case fetch(keyword: String)
@@ -54,6 +54,8 @@ final class GroupViewReactor: Reactor {
         self.selectedIDs = selectedIDs
         
         initialState = State()
+        
+        super.init()
     }
     
     // MARK: Mutate
@@ -61,6 +63,7 @@ final class GroupViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
             case .fetch(let keyword):
+                selectedIDs = []
                 return fetchGroups(keyword: keyword)
                 
             case .refresh:
@@ -73,26 +76,8 @@ final class GroupViewReactor: Reactor {
                 return createGroup(name: name)
                 
             case .clickGroup(let id):
-                let isSelected: Bool = selectedIDs.contains(id)
-                switch selectMode {
-                    case .single:
-                        if isSelected {
-                            selectedIDs = []
-                        } else {
-                            selectedIDs = [id]
-                        }
-                        
-                    case .multiple:
-                        if isSelected {
-                            selectedIDs.remove(id)
-                        } else {
-                            selectedIDs.insert(id)
-                        }
-                    case .none:
-                        selectedIDs = []
-                }
-                
-                return .just(.updateSections([self.generateSections()]))
+                toggleGroup(id: id)
+                return .just(.updateSections([generateSections()]))
         }
     }
     
@@ -137,6 +122,26 @@ extension GroupViewReactor {
     private func createGroup(name: String) -> Observable<Mutation> {
         groupService.createGroup(GroupRequest(name: name))
             .map { .appendGroup($0) }
+    }
+    
+    private func toggleGroup(id: String) {
+        let isSelected = selectedIDs.contains(id)
+        switch selectMode {
+            case .single:
+                selectedIDs.removeAll()
+                if !isSelected {
+                    selectedIDs.insert(id)
+                }
+                
+            case .multiple:
+                selectedIDs.remove(id)
+                if !isSelected {
+                    selectedIDs.insert(id)
+                }
+            
+            case .none:
+                selectedIDs = []
+        }
     }
     
     private func generateSections() -> GroupSection {

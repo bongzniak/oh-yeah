@@ -9,8 +9,11 @@
 import UIKit
 
 import Core
+import Group
 
 public final class VocabularyCoordinator: Coordinator {
+    
+    public weak var parentCoordinator: Coordinator?
     
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -24,13 +27,23 @@ public final class VocabularyCoordinator: Coordinator {
     public func start() {
         let viewController = VocabularyViewController.instance()
         viewController.coordinator = self
-        navigationController.viewControllers = [viewController]
+        // navigationController.viewControllers = [viewController]
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     public func pushToSaveVocabulary() {
-        let coordinator = SaveVocabularyCoordinator(
-            navigationController: navigationController
-        )
+        let coordinator = SaveVocabularyCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        addChild(coordinator)
+        
+        coordinator.start()
+    }
+    
+    public func pushToGroup() {
+        let coordinator = GroupCoordinator(navigationController: navigationController)
+        coordinator.parentCoordinator = self
+        addChild(coordinator)
+        
         coordinator.start()
     }
 }

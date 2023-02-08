@@ -175,8 +175,8 @@ extension VocabularyView {
     private func cellBind(_ cell: VocabularyCell) {
         cell.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                guard var vocabulary = cell.reactor?.currentState.vocabulary else { return }
+            .drive(with: self) { [weak cell] owner, _ in
+                guard var vocabulary = cell?.reactor?.currentState.vocabulary else { return }
                 vocabulary.isExpand.toggle()
                 owner.delegate?.vocabularyCellDidTap(vocabulary)
             }

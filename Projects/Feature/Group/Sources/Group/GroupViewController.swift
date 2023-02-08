@@ -97,6 +97,13 @@ final class GroupViewController: BaseViewController, View {
     private func bindAction(reactor: Reactor) {
         // Action
         
+        backBarButton.rx.throttleTap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
+        
         self.bodyView.refreshControl.rx.controlEvent(.valueChanged)
             .map { Reactor.Action.refresh }
             .bind(to: reactor.action)
@@ -143,7 +150,7 @@ final class GroupViewController: BaseViewController, View {
             .drive(with: self) { owner, text in
                 owner.reactor?.action.onNext(.fetch(keyword: text))
             }
-            .disposed(by: disposeBag)
+            .disposed(by: bodyView.disposeBag)
     }
 }
 
