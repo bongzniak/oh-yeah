@@ -114,7 +114,7 @@ final class VocabularyViewController: BaseViewController, View {
 
 extension VocabularyViewController: VocabularyViewDelegate {
     func vocabularyCellDidTap(_ vocabulary: Vocabulary) {
-        reactor?.action.onNext(.updateVocabulary(vocabulary))
+        reactor?.action.onNext(.update(vocabulary))
     }
 }
 

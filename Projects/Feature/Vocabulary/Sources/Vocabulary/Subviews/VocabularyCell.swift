@@ -38,7 +38,7 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
         }
         
         enum GroupLabel {
-            static let margin: UIEdgeInsets = UIEdgeInsets(top: 16)
+            static let margin: UIEdgeInsets = UIEdgeInsets(top: 10)
         }
         
         enum SpeackerButton {
@@ -73,6 +73,7 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
     
     private enum Localized {
         static let sectence: String = "예문"
+        static let unknownGroup: String = "그룹 미지정"
     }
     
     // MARK: Properties
@@ -242,7 +243,7 @@ final class VocabularyCell: BaseCollectionViewCell, View, Reusable {
             }
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.vocabulary.group }
+        reactor.state.map { $0.vocabulary.group?.name ?? Localized.unknownGroup }
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
             .drive(groupLabel.rx.text)
@@ -342,8 +343,9 @@ extension VocabularyCell {
         
         // GroupLabel
         
+        let groupName = vocabulary.group?.name ?? Localized.unknownGroup
         height += Metric.GroupLabel.margin.top
-        height += vocabulary.group.textSize(
+        height += groupName.textSize(
             font: Font.groupLabel,
             width: contentWidth
         ).height

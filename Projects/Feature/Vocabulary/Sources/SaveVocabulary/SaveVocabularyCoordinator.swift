@@ -23,9 +23,11 @@ public final class SaveVocabularyCoordinator: Coordinator {
     }
     
     public func start() {
-        navigationController.pushViewController(
-            SaveVocabularyViewController.instance(),
-            animated: true
-        )
+        let viewController = SaveVocabularyViewController.instance()
+        viewController.coordinator = self
+        let navigation = UINavigationController(rootViewController: viewController)
+        navigation.modalPresentationStyle = .fullScreen
+        
+        navigationController.present(navigation,animated: true)
     }
 }

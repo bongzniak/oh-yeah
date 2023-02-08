@@ -9,6 +9,18 @@
 import Foundation
 
 public struct Group: Hashable {
-    let id: String
-    let name: String
+    public let id: String
+    public let name: String
+    
+    public init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
+    
+    public init?(groupEntity: GroupEntity?) {
+        guard let groupEntity = groupEntity else { return nil }
+        
+        self.id = groupEntity.id
+        self.name = groupEntity.name
+    }
 }

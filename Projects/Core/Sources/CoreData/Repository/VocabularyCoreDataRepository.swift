@@ -10,7 +10,8 @@ import Foundation
 import CoreData
 
 public protocol VocabularyRepositoryType {
-    func fetchVocabularies() -> VocabularyResponse
+    func fetchVocabularies(with predicate: VocabularyFetchPredicate?) -> VocabularyResponse
+    func createVocabulary(_ request: VocabularyRequest) -> Vocabulary
 }
 
 public class VocabularyCoreDataRepository: VocabularyRepositoryType {
@@ -21,9 +22,20 @@ public class VocabularyCoreDataRepository: VocabularyRepositoryType {
         self.coreDataManager = coreDataManager
     }
     
-    public func fetchVocabularies() -> VocabularyResponse {
+    public func fetchVocabularies(
+        with predicate: VocabularyFetchPredicate? = nil
+    ) -> VocabularyResponse {
         let request: NSFetchRequest<VocabulayEntity> = VocabulayEntity.fetchRequest()
         var fetchedResult: [VocabulayEntity] = []
+        
+        var predicates: [NSPredicate] = []
+        if let predicate = predicate {
+            predicates.append(NSPredicate(format: "group.id = %@", predicate.groupID))
+//            if let section = predicate.section {
+//                predicates.append(NSPredicate(format: "section = %d", section))
+//            }
+        }
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
         do {
             fetchedResult = try coreDataManager.persistentContainer.viewContext.fetch(request)
@@ -31,33 +43,64 @@ public class VocabularyCoreDataRepository: VocabularyRepositoryType {
             print("Error fetching vocabularies \(error)")
         }
         
-        let items: [Vocabulary] = fetchedResult.map {
-            Vocabulary(spelling: $0.title, description: $0.subtitle)
+        for item in fetchedResult {
+            logger.debug("item.group >> ", item.group?.id ?? "")
+            logger.debug("item.group >> ", item.group?.name ?? "")
         }
-        let count = fetchVocabulayCount()
-        let hasNext = count >= items.count
+        
+        let items: [Vocabulary] = fetchedResult.map {
+            Vocabulary(
+                id: $0.id,
+                spelling: $0.spelling,
+                description: $0.desc,
+                sentence: $0.sentence,
+                group: Group(groupEntity: $0.group)
+            )
+        }
+        let count = items.count
+        let hasNext = false
         
         return VocabularyResponse(items: items, count: count, hasNext: hasNext)
     }
     
-    private func fetchVocabulayCount() -> Int {
-        let request: NSFetchRequest<VocabulayEntity> = VocabulayEntity.fetchRequest()
-        do {
-            let count = try coreDataManager.persistentContainer.viewContext.count(for: request)
-            return count
-        } catch {
-            print(error)
-            return 0
+    public func createVocabulary(_ request: VocabularyRequest) -> Vocabulary {
+        let vocabularyEntity = VocabulayEntity(
+            context: coreDataManager.persistentContainer.viewContext
+        )
+        
+        vocabularyEntity.spelling = request.spelling
+        vocabularyEntity.desc = request.description
+        vocabularyEntity.sentence = request.sentence
+        
+        let groupEntity: GroupEntity? = fetchGroup(request.groupID)
+        if let groupEntity {
+            groupEntity.addToVocabularies(vocabularyEntity)
         }
+        
+        coreDataManager.saveContext()
+        
+        return Vocabulary(
+            id: vocabularyEntity.id,
+            spelling: vocabularyEntity.spelling,
+            description: vocabularyEntity.desc,
+            sentence: vocabularyEntity.sentence,
+            group: Group(groupEntity: groupEntity)
+        )
     }
     
-//    public func saveVocabulary(vocabulary: Vocabulary) -> VocabulayEntity {
-//        let test = VocabulayEntity(context: coreDataManager.persistentContainer.viewContext)
-//        test.title = vocabulary.spelling
-//        test.subtitle = vocabulary.description
-//        
-//        coreDataManager.saveContext()
-//        
-//        return test
-//    }
+    private func fetchGroup(_ id: String) -> GroupEntity? {
+        let request: NSFetchRequest<GroupEntity> = GroupEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id = %@", id)
+        request.fetchLimit = 1
+        
+        var fetchedResult: [GroupEntity] = []
+        
+        do {
+            fetchedResult = try coreDataManager.persistentContainer.viewContext.fetch(request)
+        } catch let error {
+            print("Error fetching vocabularies \(error)")
+        }
+        
+        return fetchedResult.first
+    }
 }

@@ -18,7 +18,7 @@ final class VocabularyViewReactor: Reactor {
         case fetch
         case refresh
         case shuffle
-        case updateVocabulary(Vocabulary)
+        case update(Vocabulary)
     }
     
     enum Mutation {
@@ -64,7 +64,7 @@ final class VocabularyViewReactor: Reactor {
                 self.vocabularies = self.vocabularies.shuffled()
                 return .just(.updateSections([generateVocabularySection()]))
                 
-            case .updateVocabulary(let vocabulaty):
+            case .update(let vocabulaty):
                 if let index = vocabularies.firstIndex(where: { $0 == vocabulaty }) {
                     vocabularies[index] = vocabulaty
                 }
@@ -97,7 +97,8 @@ final class VocabularyViewReactor: Reactor {
 extension VocabularyViewReactor {
     
     private func fetchVocabularies() -> Observable<Mutation> {
-        vocabularyService.fetchVocabularies()
+        let predicate: VocabularyFetchPredicate? = nil
+        return vocabularyService.fetchVocabularies(with: predicate)
             .map { response -> Mutation in
                 return .updateVocabularies(response)
             }

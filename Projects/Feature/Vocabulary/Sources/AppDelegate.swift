@@ -13,7 +13,7 @@ import Core
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    var coordinator: VocabularyCoordinator?
+    var coordinator: Coordinator?
     
     func application(
         _ application: UIApplication,
@@ -26,6 +26,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         coordinator = VocabularyCoordinator(navigationController: navigationViewController)
+        // coordinator = SaveVocabularyCoordinator(navigationController: navigationViewController)
         coordinator?.start()
         
         return true
