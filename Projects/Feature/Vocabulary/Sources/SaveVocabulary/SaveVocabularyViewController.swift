@@ -89,9 +89,11 @@ final class SaveVocabularyViewController: BaseViewController, View {
     func bind(reactor: Reactor) {
         bindAction(reactor: reactor)
         bindState(reactor: reactor)
+        bindView(reactor: reactor)
     }
     
     private func bindAction(reactor: Reactor) {
+        
         closeBarButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
@@ -121,36 +123,37 @@ final class SaveVocabularyViewController: BaseViewController, View {
     }
     
     private func bindState(reactor: Reactor) {
-        reactor.state.map { $0.spelling }
-            .distinctUntilChanged()
+        reactor.pulse(\.$spelling)
             .asDriver(onErrorJustReturn: "")
             .drive(bodyView.spellingTextView.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.description }
-            .distinctUntilChanged()
+        reactor.pulse(\.$description)
             .asDriver(onErrorJustReturn: "")
             .drive(bodyView.descriptionTextView.rx.text)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.sentence }
-            .distinctUntilChanged()
+        reactor.pulse(\.$sentence)
             .asDriver(onErrorJustReturn: "")
             .drive(bodyView.sentenceTextView.rx.text)
             .disposed(by: disposeBag)
-        
+    }
+    
+    private func bindView(reactor: Reactor) {
         bodyView.spellingTextView.rx.text
+            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in
-                owner.bodyView.searchSententButton.isEnabled = owner.isSearchButtonEnable(text ?? "")
+                guard let text else { return }
+                owner.bodyView.searchSententButton.isEnabled = owner.isSearchButtonEnable(text)
             }
             .disposed(by: disposeBag)
         
         bodyView.spellingTextView.rx.text
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
-            .map { $0 ?? "" }
             .drive(with: self) { owner, text in
+                guard let text else { return }
                 owner.reactor?.action.onNext(.onChangedSpelling(text))
             }
             .disposed(by: disposeBag)
@@ -158,8 +161,8 @@ final class SaveVocabularyViewController: BaseViewController, View {
         bodyView.descriptionTextView.rx.text
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
-            .map { $0 ?? "" }
             .drive(with: self) { owner, text in
+                guard let text else { return }
                 owner.reactor?.action.onNext(.onChangedDescription(text))
             }
             .disposed(by: disposeBag)
@@ -167,8 +170,8 @@ final class SaveVocabularyViewController: BaseViewController, View {
         bodyView.sentenceTextView.rx.text
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
-            .map { $0 ?? "" }
             .drive(with: self) { owner, text in
+                guard let text else { return }
                 owner.reactor?.action.onNext(.onChangedSentence(text))
             }
             .disposed(by: disposeBag)

@@ -30,11 +30,11 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
     }
 
     struct State {
-        var groupID: String?
-        var vocabularyID: String?
-        var spelling: String
-        var description: String
-        var sentence: String
+        @Pulse var groupID: String?
+        @Pulse var vocabularyID: String?
+        @Pulse var spelling: String
+        @Pulse var description: String
+        @Pulse var sentence: String
     }
 
     let initialState: State

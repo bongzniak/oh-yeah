@@ -12,33 +12,32 @@ import UIKit
 import Core
 import Group
 
-public final class SaveVocabularyCoordinator: Coordinator {
+public final class SaveVocabularyCoordinator: BaseCoordinator, Coordinator {
     
     public weak var parentCoordinator: Coordinator?
     
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     
+    var rootNavigationController: UINavigationController
+    
     // MARK: Initializer
     
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-    }
-    
-    deinit {
-        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+        
+        self.rootNavigationController = UINavigationController()
+        self.rootNavigationController.modalPresentationStyle = .fullScreen
     }
     
     public func start() {
         let viewController = SaveVocabularyViewController.instance(coordinator: self)
-        navigationController.present(
-            UINavigationController(rootViewController: viewController),
-            animated: true
-        )
+        rootNavigationController.viewControllers = [viewController]
+        navigationController.present(rootNavigationController, animated: true)
     }
     
     public func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>) {
-        let coordinator = GroupCoordinator(navigationController: self.navigationController)
+        let coordinator = GroupCoordinator(navigationController: rootNavigationController)
         coordinator.parentCoordinator = self
         
         coordinator.start()

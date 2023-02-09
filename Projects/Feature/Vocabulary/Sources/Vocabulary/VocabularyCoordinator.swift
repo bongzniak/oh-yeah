@@ -11,7 +11,7 @@ import UIKit
 import Core
 import Group
 
-public final class VocabularyCoordinator: Coordinator {
+public final class VocabularyCoordinator: BaseCoordinator, Coordinator {
     
     public weak var parentCoordinator: Coordinator?
     
@@ -22,10 +22,6 @@ public final class VocabularyCoordinator: Coordinator {
     
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-    }
-    
-    deinit {
-        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
     }
     
     public func start() {

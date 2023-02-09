@@ -81,22 +81,18 @@ final class VocabularyViewController: BaseViewController, View {
             .disposed(by: self.disposeBag)
         
         self.bodyView.plusActionButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.reactor?.coordinator.pushToSaveVocabulary()
-            }
+            .map { Reactor.Action.plusActionButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         self.bodyView.shuffleActionButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.reactor?.action.onNext(.shuffle)
-            }
+            .map { Reactor.Action.shuffle }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         // State
         
-        reactor.state.map { $0.sections }
+        reactor.pulse(\.$sections)
             .asDriver(onErrorJustReturn: [])
             .drive(with: self) { owner, sections in
                 owner.bodyView.sections.accept(sections)

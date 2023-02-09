@@ -17,3 +17,14 @@ public protocol Coordinator: AnyObject {
     // MARK: - Methods
     func start()
 }
+
+
+open class BaseCoordinator {
+    deinit {
+        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
+    }
+    
+    public init() {
+        
+    }
+}

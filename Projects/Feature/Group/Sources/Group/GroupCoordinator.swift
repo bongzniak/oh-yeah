@@ -15,7 +15,7 @@ protocol GroupCoordinatorDelegate: AnyObject {
     func createGroup(name: String)
 }
 
-public final class GroupCoordinator: Coordinator {
+public final class GroupCoordinator: BaseCoordinator, Coordinator {
     
     public weak var parentCoordinator: Coordinator?
     
@@ -30,10 +30,6 @@ public final class GroupCoordinator: Coordinator {
         self.navigationController = navigationController
     }
     
-    deinit {
-        logger.verbose("DEINIT: \(String(describing: type(of: self)))")
-    }
-    
     public func start() {
         let viewController = GroupViewController.instance(
             coordinator: self,
@@ -42,6 +38,10 @@ public final class GroupCoordinator: Coordinator {
         )
         
         navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    public func close() {
+        navigationController.popViewController(animated: true)
     }
     
     public func presentCreateGroup(

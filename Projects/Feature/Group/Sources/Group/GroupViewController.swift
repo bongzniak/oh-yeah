@@ -68,8 +68,6 @@ final class GroupViewController: BaseViewController, View {
         navigationItem.rightBarButtonItem = doneBarButton
         
         reactor?.action.onNext(.fetch(keyword: ""))
-        
-        reactor?.coordinator.delegate = self
     }
     
     // MARK: Setup
@@ -96,41 +94,39 @@ final class GroupViewController: BaseViewController, View {
         // Action
         
         backBarButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.navigationController?.popViewController(animated: true)
-            }
+            .map { Reactor.Action.backBarButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        self.bodyView.refreshControl.rx.controlEvent(.valueChanged)
+        bodyView.refreshControl.rx.controlEvent(.valueChanged)
             .map { Reactor.Action.refresh }
             .bind(to: reactor.action)
             .disposed(by: self.disposeBag)
         
         bodyView.plusActionButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.reactor?.coordinator.presentCreateGroup(
-                    title: "asdasd",
+            .map {
+                Reactor.Action.plusActionButton(
+                    title: "title",
                     message: "message",
                     okTitle: "ok",
                     cancelTitle: "cancel"
                 )
             }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
     
     private func bindState(reactor: Reactor) {
         // State
         
-        reactor.state.map { $0.sections }
-            .subscribe(onNext: { [weak self] sections in
-                self?.bodyView.sections.accept(sections)
-            })
+        reactor.pulse(\.$sections)
+            .asDriver(onErrorJustReturn: [])
+            .drive(with: self) { owner, sections in
+                owner.bodyView.sections.accept(sections)
+            }
             .disposed(by: disposeBag)
-        
-        reactor.state.map { $0.isRefreshing }
-            .distinctUntilChanged()
+            
+        reactor.pulse(\.$isRefreshing)
             .asDriver(onErrorJustReturn: false)
             .drive(self.bodyView.refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
@@ -140,17 +136,26 @@ final class GroupViewController: BaseViewController, View {
         // View
         
         bodyView.searchBar.rx.text
+            .distinctUntilChanged()
             .skip(1)
             .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
-            .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
-            .map { $0 ?? "" }
             .drive(with: self) { owner, text in
+                guard let text else { return }
                 owner.reactor?.action.onNext(.fetch(keyword: text))
             }
             .disposed(by: bodyView.disposeBag)
     }
 }
+
+// MARK: GroupViewDelegate
+
+extension GroupViewController: GroupViewDelegate {
+    func groupCellDidTap(id: String) {
+        reactor?.action.onNext(.clickGroup(id: id))
+    }
+}
+
 
 extension GroupViewController {
     class func instance(
@@ -169,20 +174,5 @@ extension GroupViewController {
             ),
             bodyView: GroupView.instance()
         )
-    }
-}
-
-
-// MARK: GroupCoordinatorDelegate
-
-extension GroupViewController: GroupCoordinatorDelegate {
-    func createGroup(name: String) {
-        reactor?.action.onNext(.createGroup(name: name))
-    }
-}
-
-extension GroupViewController: GroupViewDelegate {
-    func groupCellDidTap(id: String) {
-        reactor?.action.onNext(.clickGroup(id: id))
     }
 }

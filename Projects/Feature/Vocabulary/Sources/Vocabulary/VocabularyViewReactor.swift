@@ -19,6 +19,7 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
         case refresh
         case shuffle
         case update(Vocabulary)
+        case plusActionButtonDidTap
     }
     
     enum Mutation {
@@ -77,6 +78,10 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
                 }
                 
                 return .just(.updateSections([generateVocabularySection()]))
+                
+            case .plusActionButtonDidTap:
+                coordinator.pushToSaveVocabulary()
+                return .empty()
         }
     }
     

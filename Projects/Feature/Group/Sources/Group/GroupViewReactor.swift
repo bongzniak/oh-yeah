@@ -19,6 +19,14 @@ final class GroupViewReactor: BaseReactor, Reactor {
         case refresh
         case createGroup(name: String)
         case clickGroup(id: String)
+        
+        case backBarButtonDidTap
+        case plusActionButton(
+            title: String,
+            message: String,
+            okTitle: String,
+            cancelTitle: String
+        )
     }
     
     enum Mutation {
@@ -29,8 +37,8 @@ final class GroupViewReactor: BaseReactor, Reactor {
     }
     
     struct State {
-        var sections: [GroupSection] = []
-        var isRefreshing: Bool = false
+        @Pulse var sections: [GroupSection] = []
+        @Pulse var isRefreshing: Bool = false
     }
     
     let coordinator: GroupCoordinator
@@ -59,6 +67,8 @@ final class GroupViewReactor: BaseReactor, Reactor {
         initialState = State()
         
         super.init()
+        
+        coordinator.delegate = self
     }
     
     deinit {
@@ -85,6 +95,24 @@ final class GroupViewReactor: BaseReactor, Reactor {
             case .clickGroup(let id):
                 toggleGroup(id: id)
                 return .just(.updateSections([generateSections()]))
+                
+            case .backBarButtonDidTap:
+                coordinator.close()
+                return .empty()
+                
+            case .plusActionButton(
+                let title,
+                let message,
+                let okTitle,
+                let cancelTitle
+            ):
+                coordinator.presentCreateGroup(
+                    title: title,
+                    message: message,
+                    okTitle: okTitle,
+                    cancelTitle: cancelTitle
+                )
+                return .empty()
         }
     }
     
@@ -145,7 +173,7 @@ extension GroupViewReactor {
                 if !isSelected {
                     selectedIDs.insert(id)
                 }
-            
+                
             case .none:
                 selectedIDs = []
         }
@@ -156,5 +184,14 @@ extension GroupViewReactor {
             .group($0, isSelected: selectedIDs.contains($0.id))
         }
         return .section(sectionItems)
+    }
+}
+
+
+// MARK: GroupCoordinatorDelegate
+
+extension GroupViewReactor: GroupCoordinatorDelegate {
+    func createGroup(name: String) {
+        action.onNext(.createGroup(name: name))
     }
 }

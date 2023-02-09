@@ -19,7 +19,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        let navigationViewController = UINavigationController(rootViewController: UIViewController())
+        let navigationViewController = UINavigationController()
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = navigationViewController
