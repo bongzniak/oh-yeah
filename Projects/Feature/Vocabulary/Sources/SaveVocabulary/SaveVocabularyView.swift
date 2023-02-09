@@ -47,6 +47,14 @@ final class SaveVocabularyView: BaseView {
     
     // MARK: UI Views
     
+    private let scrollView = UIScrollView().then {
+        $0.alwaysBounceVertical = true
+        $0.showsVerticalScrollIndicator = false
+    }
+    private let contentView = UIView().then {
+        $0.backgroundColor = .clear
+    }
+    
     let spellingTextView = TextViewWithTitle(style: Configure.textViewStyle).then {
         $0.title = "단어"
         $0.placeholder = "단어를 입력해주세요"
@@ -99,18 +107,29 @@ final class SaveVocabularyView: BaseView {
     override func setupHierarchy() {
         super.setupHierarchy()
         
-        addSubview(spellingTextView)
-        addSubview(descriptionTextView)
-        addSubview(sentenceTextView)
-        addSubview(searchGuideLabel)
-        addSubview(searchSententButton)
+        addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(spellingTextView)
+        contentView.addSubview(descriptionTextView)
+        contentView.addSubview(sentenceTextView)
+        contentView.addSubview(searchGuideLabel)
+        contentView.addSubview(searchSententButton)
     }
     
     override func setupLayout() {
         super.setupLayout()
         
+        scrollView.snp.makeConstraints {
+            $0.top.leading.trailing.bottom.equalToSuperview()
+        }
+        contentView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.centerX.top.bottom.equalToSuperview()
+        }
+        
         spellingTextView.snp.makeConstraints {
-            $0.top.leading.trailing.equalTo(safeAreaLayoutGuide).inset(Metric.padding)
+            $0.top.leading.trailing.equalToSuperview().inset(Metric.padding)
         }
         descriptionTextView.snp.makeConstraints {
             $0.top.equalTo(spellingTextView.snp.bottom).offset(12)
