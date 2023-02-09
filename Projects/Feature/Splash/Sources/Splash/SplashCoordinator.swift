@@ -12,7 +12,6 @@ import Core
 
 public final class SplashCoordinator: Coordinator {
     
-    public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     
     // MARK: Initializer

@@ -20,7 +20,6 @@ public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordin
     
     public weak var parentCoordinator: Coordinator?
     
-    public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     
     // MARK: Initializer

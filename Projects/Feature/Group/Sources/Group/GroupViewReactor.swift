@@ -71,10 +71,6 @@ final class GroupViewReactor: BaseReactor, Reactor {
         coordinator.delegate = self
     }
     
-    deinit {
-        
-    }
-    
     // MARK: Mutate
     
     func mutate(action: Action) -> Observable<Mutation> {

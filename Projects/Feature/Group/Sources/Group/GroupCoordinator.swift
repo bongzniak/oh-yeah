@@ -24,7 +24,6 @@ public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
     
     public weak var parentCoordinator: Coordinator?
     
-    public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     
     weak var delegate: GroupCoordinatorDelegate?

@@ -21,7 +21,6 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     
     public weak var parentCoordinator: Coordinator?
     
-    public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     
     var rootNavigationController: UINavigationController
