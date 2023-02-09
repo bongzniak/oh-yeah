@@ -21,7 +21,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
         case clickGroup(id: String)
         
         case backBarButtonDidTap
-        case plusActionButton(
+        case plusActionButtonDidTap(
             title: String,
             message: String,
             okTitle: String,
@@ -30,9 +30,9 @@ final class GroupViewReactor: BaseReactor, Reactor {
     }
     
     enum Mutation {
+        case setRefreshing(Bool)
         case updateGroups(GroupResponse)
         case appendGroup(Group)
-        case setRefreshing(Bool)
         case updateSections([GroupSection])
     }
     
@@ -41,15 +41,15 @@ final class GroupViewReactor: BaseReactor, Reactor {
         @Pulse var isRefreshing: Bool = false
     }
     
-    let coordinator: GroupCoordinator
-    let groupService: GroupServiceType
-    
-    let initialState: State
+    private let coordinator: GroupCoordinator
+    private let groupService: GroupServiceType
     
     private var groups: [Group] = []
-    
     private let selectMode: SelectMode
-    var selectedIDs = Set<String>()
+    private var selectedIDs = Set<String>()
+    private var keyword: String = ""
+    
+    let initialState: State
     
     // MARK: Initializing
     
@@ -81,11 +81,13 @@ final class GroupViewReactor: BaseReactor, Reactor {
         switch action {
             case .fetch(let keyword):
                 selectedIDs = []
+                self.keyword = keyword
                 return fetchGroups(keyword: keyword)
                 
             case .refresh:
                 return .concat([
                     .just(.setRefreshing(true)),
+                    fetchGroups(keyword: keyword),
                     .just(.setRefreshing(false))
                 ])
                 
@@ -100,7 +102,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
                 coordinator.close()
                 return .empty()
                 
-            case .plusActionButton(
+            case .plusActionButtonDidTap(
                 let title,
                 let message,
                 let okTitle,

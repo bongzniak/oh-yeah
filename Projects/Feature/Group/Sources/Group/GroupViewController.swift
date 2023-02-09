@@ -105,7 +105,7 @@ final class GroupViewController: BaseViewController, View {
         
         bodyView.plusActionButton.rx.throttleTap
             .map {
-                Reactor.Action.plusActionButton(
+                Reactor.Action.plusActionButtonDidTap(
                     title: "title",
                     message: "message",
                     okTitle: "ok",

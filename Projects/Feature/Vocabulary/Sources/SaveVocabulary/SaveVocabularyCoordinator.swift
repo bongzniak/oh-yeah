@@ -12,7 +12,12 @@ import UIKit
 import Core
 import Group
 
-public final class SaveVocabularyCoordinator: BaseCoordinator, Coordinator {
+
+protocol BaseSaveVocabularyCoordinator: Coordinator {
+    func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>)
+}
+
+public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabularyCoordinator {
     
     public weak var parentCoordinator: Coordinator?
     
