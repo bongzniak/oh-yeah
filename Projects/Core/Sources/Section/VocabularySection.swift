@@ -32,4 +32,5 @@ extension VocabularySection: SectionModelType {
 
 public enum VocabularySectionItem {
     case vocabulary(Vocabulary)
+    case empty
 }

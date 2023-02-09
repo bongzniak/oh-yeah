@@ -26,5 +26,12 @@ let project = Project.frameworkWithDemoApp(
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
     infoPlist: infoPlist,
-    dependencies: []
+    dependencies: [
+        .project(target: "Core", path: .relativeToRoot("Projects/Core")),
+        .external(name: "RxSwift"),
+        .external(name: "RxCocoa"),
+        .external(name: "SnapKit"),
+        .external(name: "Then"),
+        .external(name: "Reusable"),
+    ]
 )

@@ -20,6 +20,8 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
         case onChangedSpelling(String)
         case onChangedDescription(String)
         case onChangedSentence(String)
+        
+        case closeButtonDidTap
     }
 
     enum Mutation {
@@ -84,6 +86,10 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                 
             case .onChangedSentence(let sentence):
                 return .just(.updateSentence(sentence))
+                
+            case .closeButtonDidTap:
+                coordinator.close()
+                return .empty()
         }
     }
 
@@ -115,17 +121,18 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
 
 extension SaveVocabularyViewReactor {
     private func save() -> Observable<Mutation> {
-        vocabularyService.createVocabulary(
-            VocabularyRequest(
-                groupID: "group",
-                vocabularyID: currentState.vocabularyID ?? UUID().uuidString,
-                spelling: currentState.spelling,
-                description: currentState.description,
-                sentence: currentState.sentence
-            )
+        guard let groupID = currentState.groupID else { return .empty() }
+        
+        let vocabularyEntity = VocabularyRequest(
+            groupID: groupID,
+            vocabularyID: currentState.vocabularyID ?? UUID().uuidString,
+            spelling: currentState.spelling,
+            description: currentState.description,
+            sentence: currentState.sentence
         )
-        .map { _ in
-                .saveComplete
+        
+        return vocabularyService.createVocabulary(vocabularyEntity).map { _ in
+            .saveComplete
         }
     }
 }

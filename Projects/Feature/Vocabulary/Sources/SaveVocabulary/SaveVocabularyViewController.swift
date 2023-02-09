@@ -95,28 +95,20 @@ final class SaveVocabularyViewController: BaseViewController, View {
     private func bindAction(reactor: Reactor) {
         
         closeBarButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.navigationController?.dismiss(animated: true)
-            }
+            .map { Reactor.Action.closeButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         saveBarButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                // owner.reactor?.action.onNext(.save)
-                owner.reactor?.coordinator.pushToGroup(selectMode: .multiple,selectIDs: [])
-            }
+            .map { Reactor.Action.save }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         bodyView.searchSententButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
                 let spelling = owner.bodyView.spellingTextView.text
-                guard owner.isSearchButtonEnable(spelling) else {
-                    // TODO: Show toast >> 단어를 입력 후 눌러주세요
-                    return
-                }
+                guard owner.isSearchButtonEnable(spelling) else { return }
                 owner.searchSentence(spelling: spelling)
             }
             .disposed(by: bodyView.disposeBag)

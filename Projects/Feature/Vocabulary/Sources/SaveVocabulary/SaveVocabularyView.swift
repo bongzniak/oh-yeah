@@ -130,7 +130,8 @@ final class SaveVocabularyView: BaseView {
         }
     }
     
-    func setupBind() {
+    override public func setupBind() {
+        super.setupBind()
         
     }
 }

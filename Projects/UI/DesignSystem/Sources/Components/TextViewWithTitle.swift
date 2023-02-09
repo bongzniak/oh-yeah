@@ -8,7 +8,6 @@
 
 import UIKit
 
-import ReactorKit
 import RxCocoa
 import RxSwift
 import SnapKit
@@ -158,7 +157,9 @@ public final class TextViewWithTitle: BaseView {
         }
     }
     
-    public func setupBind() {
+    override public func setupBind() {
+        super.setupBind()
+        
         textView.rx.text
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in

@@ -17,6 +17,7 @@ import Then
 import Reusable
 
 import Core
+import DesignSystem
 
 protocol VocabularyViewDelegate: AnyObject {
     func vocabularyCellDidTap(_ vocabulary: Vocabulary)
@@ -53,7 +54,7 @@ final class VocabularyView: BaseView {
     
     weak var delegate: VocabularyViewDelegate?
 
-    var dataSource: RxDataSource!
+    lazy var dataSource: RxDataSource = dataSourceFactory()
     let sections = PublishRelay<[VocabularySection]>()
     
     // MARK: UI
@@ -83,10 +84,6 @@ final class VocabularyView: BaseView {
         super.init()
         
         backgroundColor = .ohWhite
-        
-        dataSource = dataSourceFactory()
-        
-        setupBind()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -100,6 +97,7 @@ final class VocabularyView: BaseView {
         
         collectionView.refreshControl = refreshControl
         collectionView.register(cellType: VocabularyCell.self)
+        collectionView.register(cellType: EmptyCell.self)
         
         shuffleActionButton.backgroundColor = .blue1
         shuffleActionButton.layer.cornerRadius = 22
@@ -137,7 +135,9 @@ final class VocabularyView: BaseView {
         }
     }
     
-    func setupBind() {
+    override public func setupBind() {
+        super.setupBind()
+        
         collectionView.rx.setDelegate(self)
             .disposed(by: self.disposeBag)
         
@@ -159,6 +159,10 @@ extension VocabularyView {
                         cell.reactor = VocabularyCellReactor(vocabulary: vocabulary)
                         self?.cellBind(cell)
                         return cell
+                        
+                    case .empty:
+                        let cell: EmptyCell = collectionView.dequeueReusableCell(for: indexPath)
+                        return cell
                 }
             }
         )
@@ -169,6 +173,9 @@ extension VocabularyView {
         switch sectionItem {
             case .vocabulary(let vocabulary):
                 return VocabularyCell.size(width: Metric.cellWidth, vocabulary: vocabulary)
+                
+            case .empty:
+                return EmptyCell.size(width: Metric.cellWidth, height: collectionView.frame.height)
         }
     }
     

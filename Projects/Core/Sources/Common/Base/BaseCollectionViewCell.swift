@@ -26,6 +26,7 @@ open class BaseCollectionViewCell: UICollectionViewCell, BaseViewProtocol {
         setupDelegate()
         setupHierarchy()
         setupLayout()
+        setupBind()
         
         self.addGestureRecognizer(self.tapGesture)
         self.contentView.isUserInteractionEnabled = true
@@ -51,6 +52,7 @@ open class BaseCollectionViewCell: UICollectionViewCell, BaseViewProtocol {
     open func setupDelegate() {}
     open func setupHierarchy() {}
     open func setupLayout() {}
+    open func setupBind() {}
 }
 
 extension Reactive where Base: BaseCollectionViewCell {

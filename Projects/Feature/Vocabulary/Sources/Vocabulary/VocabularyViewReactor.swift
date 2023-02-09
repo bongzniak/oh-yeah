@@ -117,10 +117,14 @@ extension VocabularyViewReactor {
     }
     
     private func generateVocabularySection() -> VocabularySection {
-        .section(
-            vocabularies.map { vocabulary -> VocabularySection.Item in
-                    .vocabulary(vocabulary)
-            }
-        )
+        var items = vocabularies.map { vocabulary -> VocabularySection.Item in
+                .vocabulary(vocabulary)
+        }
+        
+        if items.isEmpty {
+            items.append(.empty)
+        }
+        
+        return .section(items)
     }
 }

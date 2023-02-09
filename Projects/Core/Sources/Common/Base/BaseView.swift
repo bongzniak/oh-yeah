@@ -20,6 +20,8 @@ import RxSwift
     - 계층 관련 - addSubView, ...
  - setupLayout()
     - 레이아웃 관련 - view.snp.makeConstraints, ...
+ - setupBind()
+    - 바인드 관련 - label.rx.text, ...
  */
 
 protocol BaseViewProtocol {
@@ -27,6 +29,7 @@ protocol BaseViewProtocol {
     func setupDelegate()
     func setupHierarchy()
     func setupLayout()
+    func setupBind()
 }
 
 open class BaseView: UIView, BaseViewProtocol {
@@ -44,6 +47,7 @@ open class BaseView: UIView, BaseViewProtocol {
         setupDelegate()
         setupHierarchy()
         setupLayout()
+        setupBind()
     }
 
     public required convenience init?(coder aDecoder: NSCoder) {
@@ -58,4 +62,5 @@ open class BaseView: UIView, BaseViewProtocol {
     open func setupDelegate() {}
     open func setupHierarchy() {}
     open func setupLayout() {}
+    open func setupBind() {}
 }

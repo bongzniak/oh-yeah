@@ -15,6 +15,7 @@ import Group
 
 protocol BaseSaveVocabularyCoordinator: Coordinator {
     func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>)
+    func close()
 }
 
 public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabularyCoordinator {
@@ -38,6 +39,10 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
         let viewController = SaveVocabularyViewController.instance(coordinator: self)
         rootNavigationController.viewControllers = [viewController]
         navigationController.present(rootNavigationController, animated: true)
+    }
+    
+    public func close() {
+        navigationController.dismiss(animated: true)
     }
     
     public func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>) {
