@@ -90,6 +90,13 @@ final class VocabularyViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        bodyView.sectionTitleView.rx.throttleTap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, _ in
+                owner.reactor?.coordinator.pushToGroup()
+            }
+            .disposed(by: disposeBag)
+        
         // State
         
         reactor.pulse(\.$sections)
@@ -102,6 +109,12 @@ final class VocabularyViewController: BaseViewController, View {
         reactor.pulse(\.$isRefreshing)
             .asDriver(onErrorJustReturn: false)
             .drive(bodyView.refreshControl.rx.isRefreshing)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$group)
+            .map { $0?.name ?? "모든 그룹" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(bodyView.sectionTitleView.rx.subtitle)
             .disposed(by: disposeBag)
     }
 }

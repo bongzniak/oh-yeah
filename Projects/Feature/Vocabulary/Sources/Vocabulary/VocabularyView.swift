@@ -59,6 +59,7 @@ final class VocabularyView: BaseView {
     
     // MARK: UI
     
+    let sectionTitleView = SectionTitleView()
     let refreshControl = UIRefreshControl()
     let collectionView = UICollectionView(
         frame: CGRect.zero,
@@ -109,6 +110,7 @@ final class VocabularyView: BaseView {
     override func setupHierarchy() {
         super.setupHierarchy()
         
+        addSubview(sectionTitleView)
         addSubview(collectionView)
         addSubview(shuffleActionButton)
         addSubview(plusActionButton)
@@ -117,8 +119,14 @@ final class VocabularyView: BaseView {
     override func setupLayout() {
         super.setupLayout()
         
+        sectionTitleView.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview().inset(Metric.CollectionView.contentInset.horizontal)
+        }
+        
         collectionView.snp.makeConstraints {
-            $0.edges.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(sectionTitleView.snp.bottom)
+            $0.leading.bottom.trailing.equalTo(safeAreaLayoutGuide)
         }
         
         shuffleActionButton.snp.makeConstraints {
@@ -175,7 +183,10 @@ extension VocabularyView {
                 return VocabularyCell.size(width: Metric.cellWidth, vocabulary: vocabulary)
                 
             case .empty:
-                return EmptyCell.size(width: Metric.cellWidth, height: collectionView.frame.height)
+                return EmptyCell.size(
+                    width: Metric.cellWidth,
+                    height: collectionView.frame.height - Metric.CollectionView.contentInset.vertical
+                )
         }
     }
     

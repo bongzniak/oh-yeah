@@ -51,9 +51,7 @@ final class SaveVocabularyView: BaseView {
         $0.alwaysBounceVertical = true
         $0.showsVerticalScrollIndicator = false
     }
-    private let contentView = UIView().then {
-        $0.backgroundColor = .clear
-    }
+    private let contentView = UIView()
     
     let spellingTextView = TextViewWithTitle(style: Configure.textViewStyle).then {
         $0.title = "단어"
@@ -75,7 +73,12 @@ final class SaveVocabularyView: BaseView {
         $0.textColor = .gray6
     }
     let searchSententButton: UIButton = UIButton().then {
-        $0.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        $0.configuration?.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 0,
+            bottom: 0,
+            trailing: 0
+        )
         $0.titleLabel?.font = .bold(ofSize: 12)
         $0.setTitle("예문 찾아보기", for: .normal)
         $0.setTitleColor(.blue6, for: .normal)
@@ -146,12 +149,12 @@ final class SaveVocabularyView: BaseView {
         searchSententButton.snp.makeConstraints {
             $0.top.equalTo(sentenceTextView.snp.bottom).offset(4)
             $0.trailing.equalTo(sentenceTextView)
+            $0.bottom.lessThanOrEqualToSuperview()
         }
     }
     
     override public func setupBind() {
         super.setupBind()
-        
     }
 }
 
