@@ -15,18 +15,6 @@ import Then
 
 import Core
 
-public struct LabelStyle {
-    var font: UIFont
-    var textColor: UIColor
-    var numberOfLine: Int
-    
-    public init(font: UIFont, textColor: UIColor, numberOfLine: Int = 0) {
-        self.font = font
-        self.textColor = textColor
-        self.numberOfLine = numberOfLine
-    }
-}
-
 public struct TextViewStyle {
     var titleStyle: LabelStyle
     var subtitleStyle: LabelStyle
