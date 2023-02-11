@@ -16,16 +16,27 @@ protocol BaseVocabularyCoordinator: Coordinator {
     func pushToGroup()
 }
 
+protocol VocabularyCoordinatorDelegate: AnyObject {
+    func selectedGroup(_ group: Group?)
+}
+
 public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordinator {
     
     public weak var parentCoordinator: Coordinator?
     
     public var navigationController: UINavigationController
     
+    weak var delegate: VocabularyCoordinatorDelegate?
+    
+    var rootNavigationController: UINavigationController
+    
     // MARK: Initializer
     
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+        
+        self.rootNavigationController = UINavigationController()
+        self.rootNavigationController.modalPresentationStyle = .fullScreen
     }
     
     public func start() {
@@ -47,3 +58,9 @@ public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordin
         coordinator.start()
     }
 }
+//
+//extension VocabularyCoordinator: GroupCoordinatorDelegate {
+//    public func createGroup(name: String) {
+//        logger.debug("test >> ", name)
+//    }
+//}

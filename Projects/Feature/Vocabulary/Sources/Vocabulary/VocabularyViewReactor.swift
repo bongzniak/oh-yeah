@@ -31,6 +31,7 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     struct State {
         @Pulse var sections: [VocabularySection] = []
         @Pulse var isRefreshing: Bool = false
+        @Pulse var group: Group?
     }
     
     let initialState: State
@@ -52,6 +53,8 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
         initialState = State()
         
         super.init()
+        
+        coordinator.delegate = self
     }
     
     // MARK: Mutate
@@ -126,5 +129,11 @@ extension VocabularyViewReactor {
         }
         
         return .section(items)
+    }
+}
+
+extension VocabularyViewReactor: VocabularyCoordinatorDelegate {
+    func selectedGroup(_ group: Group?) {
+        logger.debug("group >> ", group)
     }
 }

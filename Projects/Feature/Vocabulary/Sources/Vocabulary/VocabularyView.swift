@@ -47,6 +47,11 @@ final class VocabularyView: BaseView {
     private enum Font {    
     }
     
+    private enum Image {
+        static let shuffle = UIImage(systemName: "shuffle")
+        static let plus = UIImage(systemName: "plus")
+    }
+    
     private enum Localized {
     }
     
@@ -72,11 +77,11 @@ final class VocabularyView: BaseView {
     }
     
     let shuffleActionButton: UIButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "shuffle"), for: .normal)
+        $0.setImage(Image.shuffle, for: .normal)
     }
     
     let plusActionButton: UIButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "plus"), for: .normal)
+        $0.setImage(Image.plus, for: .normal)
     }
     
     // MARK: Initializing
@@ -95,6 +100,8 @@ final class VocabularyView: BaseView {
     
     override func setupProperty() {
         super.setupProperty()
+     
+        sectionTitleView.title = "오늘 공부할 단어들이에요!!"
         
         collectionView.refreshControl = refreshControl
         collectionView.register(cellType: VocabularyCell.self)
@@ -121,7 +128,7 @@ final class VocabularyView: BaseView {
         
         sectionTitleView.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview().inset(Metric.CollectionView.contentInset.horizontal)
+            $0.leading.trailing.equalToSuperview().inset(10)
         }
         
         collectionView.snp.makeConstraints {

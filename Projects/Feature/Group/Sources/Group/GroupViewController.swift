@@ -15,11 +15,17 @@ import RxSwift
 import Core
 import DesignSystem
 
+protocol GroupViewControllerDelegate: AnyObject {
+    func selectedGroup(_ group: Group?)
+}
+
 final class GroupViewController: BaseViewController, View {
     
     typealias Reactor = GroupViewReactor
     
     // MARK: Properties
+    
+    weak var delegate: GroupViewControllerDelegate?
 
     // MARK: UI
     
@@ -96,6 +102,13 @@ final class GroupViewController: BaseViewController, View {
         backBarButton.rx.throttleTap
             .map { Reactor.Action.backBarButtonDidTap }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        doneBarButton.rx.throttleTap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { owner, _ in
+                owner.delegate?.selectedGroup(nil)
+            }
             .disposed(by: disposeBag)
         
         bodyView.refreshControl.rx.controlEvent(.valueChanged)

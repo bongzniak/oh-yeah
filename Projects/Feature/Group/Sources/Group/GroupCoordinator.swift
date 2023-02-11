@@ -11,13 +11,15 @@ import UIKit
 
 import Core
 
-protocol GroupCoordinatorDelegate: AnyObject {
-    func createGroup(name: String)
-}
-
 protocol BsaeGroupCoordinator: Coordinator {
     func close()
-    func presentCreateGroup(title: String, message: String, okTitle: String, cancelTitle: String)
+    func presentCreateGroup(
+        title: String,
+        message: String,
+        okTitle: String,
+        cancelTitle: String,
+        action: @escaping (String) -> Void
+    )
 }
 
 public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
@@ -25,8 +27,6 @@ public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
     public weak var parentCoordinator: Coordinator?
     
     public var navigationController: UINavigationController
-    
-    weak var delegate: GroupCoordinatorDelegate?
     
     // MARK: Initializer
     
@@ -52,7 +52,8 @@ public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
         title: String,
         message: String,
         okTitle: String,
-        cancelTitle: String
+        cancelTitle: String,
+        action: @escaping (String) -> Void
     ) {
         let alertController = UIAlertController(
             title: title,
@@ -61,10 +62,10 @@ public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
         )
         alertController.addTextField()
         alertController.addAction(
-            UIAlertAction(title: okTitle, style: .default) { [weak self] _ in
+            UIAlertAction(title: okTitle, style: .default) { _ in
                 guard let name = alertController.textFields?[0].text,
                       !name.isEmpty else { return }
-                self?.delegate?.createGroup(name: name)
+                action(name)
             }
         )
         alertController.addAction(

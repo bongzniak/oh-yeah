@@ -21,6 +21,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
         case clickGroup(id: String)
         
         case backBarButtonDidTap
+        case doneBarButtonDidTap
         case plusActionButtonDidTap(
             title: String,
             message: String,
@@ -67,8 +68,6 @@ final class GroupViewReactor: BaseReactor, Reactor {
         initialState = State()
         
         super.init()
-        
-        coordinator.delegate = self
     }
     
     // MARK: Mutate
@@ -98,6 +97,9 @@ final class GroupViewReactor: BaseReactor, Reactor {
                 coordinator.close()
                 return .empty()
                 
+            case .doneBarButtonDidTap:
+                return .empty()
+                
             case .plusActionButtonDidTap(
                 let title,
                 let message,
@@ -109,7 +111,9 @@ final class GroupViewReactor: BaseReactor, Reactor {
                     message: message,
                     okTitle: okTitle,
                     cancelTitle: cancelTitle
-                )
+                ) { [weak self] name in
+                        self?.action.onNext(.createGroup(name: name))
+                    }
                 return .empty()
         }
     }
@@ -182,14 +186,5 @@ extension GroupViewReactor {
             .group($0, isSelected: selectedIDs.contains($0.id))
         }
         return .section(sectionItems)
-    }
-}
-
-
-// MARK: GroupCoordinatorDelegate
-
-extension GroupViewReactor: GroupCoordinatorDelegate {
-    func createGroup(name: String) {
-        action.onNext(.createGroup(name: name))
     }
 }
