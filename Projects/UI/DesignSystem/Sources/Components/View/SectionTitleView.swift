@@ -58,7 +58,7 @@ public final class SectionTitleView: BaseView {
         $0.alignment = .center
         $0.distribution = .fill
         $0.axis = .horizontal
-        $0.spacing = 4
+        $0.spacing = 2
     }
     
     let titleLabel = UILabel()
