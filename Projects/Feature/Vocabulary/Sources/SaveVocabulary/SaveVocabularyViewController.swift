@@ -79,8 +79,8 @@ final class SaveVocabularyViewController: BaseViewController, View {
     }
     
     func setupNavigation() {
-        self.navigationItem.leftBarButtonItem = closeBarButton
-        self.navigationItem.rightBarButtonItem = saveBarButton
+        navigationItem.leftBarButtonItem = closeBarButton
+        navigationItem.rightBarButtonItem = saveBarButton
     }
     
     
