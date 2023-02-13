@@ -138,14 +138,10 @@ extension VocabularyViewReactor {
         }
         
         if items.isEmpty {
-            items.append(.empty)
+            items = [.empty]
         }
         
         return .section(items)
-    }
-    
-    private func test(group: Group?) -> Observable<Mutation> {
-        return .just(.updateGroup(group))
     }
 }
 
