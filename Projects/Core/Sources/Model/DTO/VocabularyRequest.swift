@@ -11,14 +11,14 @@ import Foundation
 public struct VocabularyRequest {
     public let groupID: String
     
-    public let vocabularyID: String
+    public let vocabularyID: String?
     public let spelling: String
     public let description: String
     public let sentence: String
     
     public init(
         groupID: String,
-        vocabularyID: String,
+        vocabularyID: String?,
         spelling: String,
         description: String,
         sentence: String

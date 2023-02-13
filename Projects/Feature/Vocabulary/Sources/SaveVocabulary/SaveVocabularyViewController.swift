@@ -104,6 +104,11 @@ final class SaveVocabularyViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        bodyView.sectionTitleView.rx.throttleTap
+            .map { Reactor.Action.groupSelectButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         bodyView.searchSententButton.rx.throttleTap
             .asDriver(onErrorJustReturn: ())
             .drive(with: self) { owner, _ in
@@ -115,6 +120,20 @@ final class SaveVocabularyViewController: BaseViewController, View {
     }
     
     private func bindState(reactor: Reactor) {
+        
+        reactor.state.map {
+            $0.group != nil && !$0.spelling.isEmpty && !$0.description.isEmpty
+        }
+        .distinctUntilChanged()
+        .asDriver(onErrorJustReturn: false)
+        .drive(saveBarButton.rx.isEnabled)
+        .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.group?.name ?? "미지정 그룹" }
+            .asDriver(onErrorJustReturn: "")
+            .drive(bodyView.sectionTitleView.rx.subtitle)
+            .disposed(by: disposeBag)
+        
         reactor.pulse(\.$spelling)
             .asDriver(onErrorJustReturn: "")
             .drive(bodyView.spellingTextView.rx.text)
@@ -183,12 +202,14 @@ final class SaveVocabularyViewController: BaseViewController, View {
 }
 
 extension SaveVocabularyViewController {
-    class func instance(coordinator: SaveVocabularyCoordinator) -> SaveVocabularyViewController {
+    class func instance(
+        coordinator: SaveVocabularyCoordinator,
+        vocabulary: Vocabulary? = nil
+    ) -> SaveVocabularyViewController {
         SaveVocabularyViewController(
             reactor: SaveVocabularyViewReactor(
                 coordinator: coordinator,
-                groupID: nil,
-                vocabularyID: nil,
+                vocabulary: vocabulary,
                 vocabularyService: VocabularyCoreDataService(
                     repository: VocabularyCoreDataRepository(
                         coreDataManager: CoreDataManager.shared

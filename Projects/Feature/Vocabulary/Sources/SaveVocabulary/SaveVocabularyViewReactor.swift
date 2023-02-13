@@ -17,22 +17,25 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
   
     enum Action {
         case save
+        case onChangedGroup(Group?)
         case onChangedSpelling(String)
         case onChangedDescription(String)
         case onChangedSentence(String)
         
+        case groupSelectButtonDidTap
         case closeButtonDidTap
     }
 
     enum Mutation {
         case saveComplete
+        case updateGroup(Group?)
         case updateSpelling(String)
         case updateDescription(String)
         case updateSentence(String)
     }
 
     struct State {
-        @Pulse var groupID: String?
+        @Pulse var group: Group?
         @Pulse var vocabularyID: String?
         @Pulse var spelling: String
         @Pulse var description: String
@@ -41,29 +44,30 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
 
     let initialState: State
     
-    let coordinator: SaveVocabularyCoordinator
-    let vocabularyService: VocabularyServiceType
-
+    private let coordinator: SaveVocabularyCoordinator
+    private let vocabularyService: VocabularyServiceType
+    
     // MARK: Initializing
     
     init(
         coordinator: SaveVocabularyCoordinator,
-        groupID: String?,
-        vocabularyID: String?,
+        vocabulary: Vocabulary?,
         vocabularyService: VocabularyServiceType
     ) {
         self.coordinator = coordinator
         self.vocabularyService = vocabularyService
         
         initialState = State(
-            groupID: groupID,
-            vocabularyID: vocabularyID,
-            spelling: "",
-            description: "",
-            sentence: ""
+            group: vocabulary?.group,
+            vocabularyID: vocabulary?.id,
+            spelling: vocabulary?.spelling ?? "",
+            description: vocabulary?.description ?? "",
+            sentence: vocabulary?.sentence ?? ""
         )
         
         super.init()
+        
+        self.coordinator.delegate = self
     }
     
     // MARK: Mutate
@@ -78,6 +82,9 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                     .just(.updateSentence("")),
                 ])
                 
+            case .onChangedGroup(let group):
+                return .just(.updateGroup(group))
+                
             case .onChangedSpelling(let spelling):
                 return .just(.updateSpelling(spelling))
                 
@@ -86,6 +93,10 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                 
             case .onChangedSentence(let sentence):
                 return .just(.updateSentence(sentence))
+                
+            case .groupSelectButtonDidTap:
+                coordinator.pushToGroup(selectMode: .single, selectIDs: [])
+                return .empty()
                 
             case .closeButtonDidTap:
                 coordinator.close()
@@ -104,6 +115,9 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                 state.spelling = ""
                 state.description = ""
                 state.sentence = ""
+                
+            case .updateGroup(let group):
+                state.group = group
             
             case .updateSpelling(let spelling):
                 state.spelling = spelling
@@ -121,11 +135,11 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
 
 extension SaveVocabularyViewReactor {
     private func save() -> Observable<Mutation> {
-        guard let groupID = currentState.groupID else { return .empty() }
+        guard let groupID = currentState.group?.id else { return .empty() }
         
         let vocabularyEntity = VocabularyRequest(
             groupID: groupID,
-            vocabularyID: currentState.vocabularyID ?? UUID().uuidString,
+            vocabularyID: currentState.vocabularyID,
             spelling: currentState.spelling,
             description: currentState.description,
             sentence: currentState.sentence
@@ -134,5 +148,11 @@ extension SaveVocabularyViewReactor {
         return vocabularyService.createVocabulary(vocabularyEntity).map { _ in
             .saveComplete
         }
+    }
+}
+
+extension SaveVocabularyViewReactor: SaveVocabularyCoordinatorDelegate {
+    func selectedGroups(_ groups: [Group]) {
+        action.onNext(.onChangedGroup(groups.first))
     }
 }

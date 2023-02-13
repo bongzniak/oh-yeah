@@ -18,12 +18,17 @@ protocol BaseSaveVocabularyCoordinator: Coordinator {
     func close()
 }
 
+// Coordinator <-> Reactor
+public protocol SaveVocabularyCoordinatorDelegate: AnyObject {
+    func selectedGroups(_ groups: [Group])
+}
+
 public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabularyCoordinator {
     
     public weak var parentCoordinator: Coordinator?
-    
     public var navigationController: UINavigationController
     
+    public weak var delegate: SaveVocabularyCoordinatorDelegate?
     var rootNavigationController: UINavigationController
     
     // MARK: Initializer
@@ -48,7 +53,14 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     public func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>) {
         let coordinator = GroupCoordinator(navigationController: rootNavigationController)
         coordinator.parentCoordinator = self
+        coordinator.delegate = self
         
         coordinator.start()
+    }
+}
+
+extension SaveVocabularyCoordinator: GroupCoordinatorDelegate {
+    public func selectedGroups(_ groups: [Group]) {
+        delegate?.selectedGroups(groups)
     }
 }
