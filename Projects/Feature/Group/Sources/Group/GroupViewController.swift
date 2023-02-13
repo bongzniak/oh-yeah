@@ -15,17 +15,11 @@ import RxSwift
 import Core
 import DesignSystem
 
-protocol GroupViewControllerDelegate: AnyObject {
-    func selectedGroup(_ group: Group?)
-}
-
 final class GroupViewController: BaseViewController, View {
     
     typealias Reactor = GroupViewReactor
     
     // MARK: Properties
-    
-    weak var delegate: GroupViewControllerDelegate?
 
     // MARK: UI
     
@@ -105,16 +99,14 @@ final class GroupViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         doneBarButton.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.delegate?.selectedGroup(nil)
-            }
+            .map { Reactor.Action.doneBarButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         bodyView.refreshControl.rx.controlEvent(.valueChanged)
             .map { Reactor.Action.refresh }
             .bind(to: reactor.action)
-            .disposed(by: self.disposeBag)
+            .disposed(by: disposeBag)
         
         bodyView.plusActionButton.rx.throttleTap
             .map {
@@ -141,7 +133,7 @@ final class GroupViewController: BaseViewController, View {
             
         reactor.pulse(\.$isRefreshing)
             .asDriver(onErrorJustReturn: false)
-            .drive(self.bodyView.refreshControl.rx.isRefreshing)
+            .drive(bodyView.refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
     }
     

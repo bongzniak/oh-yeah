@@ -98,6 +98,8 @@ final class GroupViewReactor: BaseReactor, Reactor {
                 return .empty()
                 
             case .doneBarButtonDidTap:
+                let selectedGroups = groups.filter { selectedIDs.contains($0.id) }
+                coordinator.close(with: selectedGroups)
                 return .empty()
                 
             case .plusActionButtonDidTap(
@@ -132,7 +134,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
                 state.isRefreshing = isRefreshing
                 
             case .appendGroup(let group):
-                self.groups.append(group)
+                groups.append(group)
                 state.sections = [generateSections()]
                 
             case .updateSections(let sections):

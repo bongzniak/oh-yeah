@@ -15,10 +15,11 @@ import Core
 final class VocabularyViewReactor: BaseReactor, Reactor {
     
     enum Action {
-        case fetch
+        case fetch(Group?)
         case refresh
         case shuffle
         case update(Vocabulary)
+        case groupSelectButtonDidTap
         case plusActionButtonDidTap
     }
     
@@ -26,6 +27,7 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
         case setRefreshing(Bool)
         case updateVocabularies(VocabularyResponse)
         case updateSections([VocabularySection])
+        case updateGroup(Group?)
     }
     
     struct State {
@@ -36,8 +38,8 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     
     let initialState: State
     
-    let coordinator: VocabularyCoordinator
-    let vocabularyService: VocabularyServiceType
+    private let coordinator: VocabularyCoordinator
+    private let vocabularyService: VocabularyServiceType
     
     private var vocabularies: [Vocabulary] = []
     
@@ -61,13 +63,16 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-            case .fetch:
-                return fetchVocabularies()
+            case .fetch(let group):
+                return .concat([
+                    fetchVocabularies(with: group),
+                    .just(.updateGroup(group))
+                ])
             
             case .refresh:
                 return .concat([
                     .just(.setRefreshing(true)),
-                    fetchVocabularies(),
+                    fetchVocabularies(with: currentState.group),
                     .just(.setRefreshing(false))
                 ])
                 
@@ -81,6 +86,10 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
                 }
                 
                 return .just(.updateSections([generateVocabularySection()]))
+                
+            case .groupSelectButtonDidTap:
+                coordinator.pushToGroup()
+                return .empty()
                 
             case .plusActionButtonDidTap:
                 coordinator.pushToSaveVocabulary()
@@ -103,6 +112,10 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
             case .updateVocabularies(let response):
                 vocabularies = response.items
                 state.sections = [generateVocabularySection()]
+                
+            case .updateGroup(let group):
+                state.group = group
+                
         }
         
         return state
@@ -110,12 +123,12 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
 }
 
 extension VocabularyViewReactor {
-    
-    private func fetchVocabularies() -> Observable<Mutation> {
-        let predicate: VocabularyFetchPredicate? = nil
-        return vocabularyService.fetchVocabularies(with: predicate)
-            .map { response -> Mutation in
-                return .updateVocabularies(response)
+    private func fetchVocabularies(with group: Group? = nil) -> Observable<Mutation> {
+        vocabularyService.fetchVocabularies(
+            with: VocabularyFetchPredicate(group: group)
+        )
+            .map {
+                .updateVocabularies($0)
             }
     }
     
@@ -130,10 +143,16 @@ extension VocabularyViewReactor {
         
         return .section(items)
     }
+    
+    private func test(group: Group?) -> Observable<Mutation> {
+        return .just(.updateGroup(group))
+    }
 }
 
 extension VocabularyViewReactor: VocabularyCoordinatorDelegate {
-    func selectedGroup(_ group: Group?) {
-        logger.debug("group >> ", group)
+    func selectedGroups(_ groups: [Group]) {
+        guard currentState.group != groups.first else { return }
+        
+        action.onNext(.fetch(groups.first))
     }
 }

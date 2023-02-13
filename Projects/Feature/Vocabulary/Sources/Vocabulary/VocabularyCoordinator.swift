@@ -16,8 +16,10 @@ protocol BaseVocabularyCoordinator: Coordinator {
     func pushToGroup()
 }
 
+// TODO: 네이밍 고민...
+// Coordinator <-> Reactor
 protocol VocabularyCoordinatorDelegate: AnyObject {
-    func selectedGroup(_ group: Group?)
+    func selectedGroups(_ groups: [Group])
 }
 
 public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordinator {
@@ -54,13 +56,14 @@ public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordin
     public func pushToGroup() {
         let coordinator = GroupCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
-        
+        coordinator.delegate = self
+
         coordinator.start()
     }
 }
-//
-//extension VocabularyCoordinator: GroupCoordinatorDelegate {
-//    public func createGroup(name: String) {
-//        logger.debug("test >> ", name)
-//    }
-//}
+
+extension VocabularyCoordinator: GroupCoordinatorDelegate {
+    public func selectedGroups(_ groups: [Core.Group]) {
+        delegate?.selectedGroups(groups)
+    }
+}

@@ -19,7 +19,7 @@ final class VocabularyViewController: BaseViewController, View {
     typealias Reactor = VocabularyViewReactor
     
     // MARK: Properties
-
+    
     // MARK: UI
     
     let bodyView: VocabularyView
@@ -37,6 +37,8 @@ final class VocabularyViewController: BaseViewController, View {
         self.bodyView = bodyView
         
         super.init()
+        
+        self.bodyView.parentViewController = self
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -54,9 +56,7 @@ final class VocabularyViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        bodyView.delegate = self
-        
-        reactor?.action.onNext(.fetch)
+        reactor?.action.onNext(.fetch(nil))
     }
     
     // MARK: Setup
@@ -75,26 +75,24 @@ final class VocabularyViewController: BaseViewController, View {
 
         // Action
         
-        self.bodyView.refreshControl.rx.controlEvent(.valueChanged)
+        bodyView.refreshControl.rx.controlEvent(.valueChanged)
             .map { Reactor.Action.refresh }
             .bind(to: reactor.action)
-            .disposed(by: self.disposeBag)
+            .disposed(by: disposeBag)
         
-        self.bodyView.plusActionButton.rx.throttleTap
+        bodyView.plusActionButton.rx.throttleTap
             .map { Reactor.Action.plusActionButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        self.bodyView.shuffleActionButton.rx.throttleTap
+        bodyView.shuffleActionButton.rx.throttleTap
             .map { Reactor.Action.shuffle }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         bodyView.sectionTitleView.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { owner, _ in
-                owner.reactor?.coordinator.pushToGroup()
-            }
+            .map { Reactor.Action.groupSelectButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         // State
@@ -117,13 +115,18 @@ final class VocabularyViewController: BaseViewController, View {
             .drive(bodyView.sectionTitleView.rx.subtitle)
             .disposed(by: disposeBag)
     }
-}
-
-// MARK: VocabularyViewDelegate
-
-extension VocabularyViewController: VocabularyViewDelegate {
-    func vocabularyCellDidTap(_ vocabulary: Vocabulary) {
-        reactor?.action.onNext(.update(vocabulary))
+    
+    // Using BodyView
+    
+    func bindCell(_ cell: VocabularyCell) {
+        cell.rx.throttleTap
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { [weak cell] owner, _ in
+                guard var vocabulary = cell?.reactor?.currentState.vocabulary else { return }
+                vocabulary.isExpand.toggle()
+                owner.reactor?.action.onNext(.update(vocabulary))
+            }
+            .disposed(by: cell.disposeBag)
     }
 }
 

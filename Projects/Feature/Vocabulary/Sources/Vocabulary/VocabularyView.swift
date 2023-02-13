@@ -19,10 +19,6 @@ import Reusable
 import Core
 import DesignSystem
 
-protocol VocabularyViewDelegate: AnyObject {
-    func vocabularyCellDidTap(_ vocabulary: Vocabulary)
-}
-
 final class VocabularyView: BaseView {
     
     typealias RxDataSource = RxCollectionViewSectionedReloadDataSource<VocabularySection>
@@ -56,9 +52,9 @@ final class VocabularyView: BaseView {
     }
     
     // MARK: Properties
-    
-    weak var delegate: VocabularyViewDelegate?
 
+    weak var parentViewController: VocabularyViewController?
+    
     lazy var dataSource: RxDataSource = dataSourceFactory()
     let sections = PublishRelay<[VocabularySection]>()
     
@@ -172,7 +168,7 @@ extension VocabularyView {
                     case .vocabulary(let vocabulary):
                         let cell: VocabularyCell = collectionView.dequeueReusableCell(for: indexPath)
                         cell.reactor = VocabularyCellReactor(vocabulary: vocabulary)
-                        self?.cellBind(cell)
+                        self?.parentViewController?.bindCell(cell)
                         return cell
                         
                     case .empty:
@@ -195,17 +191,6 @@ extension VocabularyView {
                     height: collectionView.frame.height - Metric.CollectionView.contentInset.vertical
                 )
         }
-    }
-    
-    private func cellBind(_ cell: VocabularyCell) {
-        cell.rx.throttleTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { [weak cell] owner, _ in
-                guard var vocabulary = cell?.reactor?.currentState.vocabulary else { return }
-                vocabulary.isExpand.toggle()
-                owner.delegate?.vocabularyCellDidTap(vocabulary)
-            }
-            .disposed(by: cell.disposeBag)
     }
 }
 

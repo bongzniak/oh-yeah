@@ -22,9 +22,16 @@ protocol BsaeGroupCoordinator: Coordinator {
     )
 }
 
+// Coordinator <-> Coordinator
+public protocol GroupCoordinatorDelegate: AnyObject {
+    func selectedGroups(_ groups: [Group])
+}
+
 public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
     
     public weak var parentCoordinator: Coordinator?
+    
+    public weak var delegate: GroupCoordinatorDelegate?
     
     public var navigationController: UINavigationController
     
@@ -46,6 +53,13 @@ public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
     
     public func close() {
         navigationController.popViewController(animated: true)
+    }
+    
+    
+    public func close(with groups: [Group]) {
+        delegate?.selectedGroups(groups)
+        
+        close()
     }
     
     public func presentCreateGroup(
