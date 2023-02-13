@@ -22,5 +22,12 @@ public struct VocabularyFetchPredicate {
         self.groupID = groupID
         self.section = section
     }
+    
+    public init?(group: Group?) {
+        guard let group else { return nil }
+        
+        self.groupID = group.id
+        self.section = nil
+    }
 }
 
