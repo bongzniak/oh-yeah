@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Group: Hashable {
+public struct Group: Codable, Hashable {
     public let id: String
     public let name: String
     public let count: Int
