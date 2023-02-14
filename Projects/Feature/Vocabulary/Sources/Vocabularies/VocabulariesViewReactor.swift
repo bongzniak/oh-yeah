@@ -28,6 +28,7 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
         case updateVocabularies(VocabularyResponse)
         case updateSections([VocabularySection])
         case updateGroup(Group?)
+        case saveVocabulary(Vocabulary)
     }
     
     struct State {
@@ -96,6 +97,23 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
                 return .empty()
         }
     }
+
+    func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let events = Vocabulary.event.flatMap { [weak self] event in
+            self?.mutation(from: event) ?? .empty()
+        }
+        return Observable.of(mutation, events).merge()
+    }
+    
+    func mutation(from event: Vocabulary.Event) -> Observable<Mutation> {
+        switch event {
+            case .save(let vocabulary):
+                guard currentState.group == nil
+                        || vocabulary.group == currentState.group else { return .empty() }
+                
+                return .just(.saveVocabulary(vocabulary))
+        }
+    }
     
     // MARK: Reduce
     
@@ -116,6 +134,13 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
             case .updateGroup(let group):
                 state.group = group
                 
+            case .saveVocabulary(let vocabulary):
+                if let index = vocabularies.firstIndex(where: { $0 == vocabulary }) {
+                    self.vocabularies[index] = vocabulary
+                } else {
+                    self.vocabularies.insert(vocabulary, at: 0)
+                }
+                state.sections = [generateVocabularySection()]
         }
         
         return state

@@ -27,7 +27,7 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
     }
 
     enum Mutation {
-        case saveComplete
+        case saveComplete(Vocabulary)
         case updateGroup(Group?)
         case updateSpelling(String)
         case updateDescription(String)
@@ -110,12 +110,14 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
         var state = state
 
         switch mutation {
-            case .saveComplete:
+            case .saveComplete(let vocabulary):
                 state.vocabularyID = nil
                 state.spelling = ""
                 state.description = ""
                 state.sentence = ""
                 
+                Vocabulary.event.onNext(.save(vocabulary))
+            
             case .updateGroup(let group):
                 state.group = group
             
@@ -145,8 +147,8 @@ extension SaveVocabularyViewReactor {
             sentence: currentState.sentence
         )
         
-        return vocabularyService.createVocabulary(vocabularyEntity).map { _ in
-            .saveComplete
+        return vocabularyService.createVocabulary(vocabularyEntity).map { vocabulary in
+                .saveComplete(vocabulary)
         }
     }
 }
