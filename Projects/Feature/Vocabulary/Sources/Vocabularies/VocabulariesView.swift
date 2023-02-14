@@ -1,5 +1,5 @@
 //
-//  VocabularyView.swift
+//  VocabulariesView.swift
 //  Vocabulary
 //
 //  Created by bongzniak on 2023/01/20.
@@ -19,7 +19,7 @@ import Reusable
 import Core
 import DesignSystem
 
-final class VocabularyView: BaseView {
+final class VocabulariesView: BaseView {
     
     typealias RxDataSource = RxCollectionViewSectionedReloadDataSource<VocabularySection>
     
@@ -53,7 +53,7 @@ final class VocabularyView: BaseView {
     
     // MARK: Properties
 
-    weak var parentViewController: VocabularyViewController?
+    weak var parentViewController: VocabulariesViewController?
     
     lazy var dataSource: RxDataSource = dataSourceFactory()
     let sections = PublishRelay<[VocabularySection]>()
@@ -159,7 +159,7 @@ final class VocabularyView: BaseView {
     }
 }
 
-extension VocabularyView {
+extension VocabulariesView {
     private func dataSourceFactory() -> RxDataSource {
         RxDataSource(
             configureCell: { [weak self]
@@ -197,7 +197,7 @@ extension VocabularyView {
 
 // MARK: UICollectionViewDelegateFlowLayout
 
-extension VocabularyView: UICollectionViewDelegateFlowLayout {
+extension VocabulariesView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -207,8 +207,8 @@ extension VocabularyView: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension VocabularyView {
-    class func instance() -> VocabularyView {
-        VocabularyView()
+extension VocabulariesView {
+    class func instance() -> VocabulariesView {
+        VocabulariesView()
     } 
 }

@@ -1,5 +1,5 @@
 //
-//  VocabularyCoordinator.swift
+//  VocabulariesCoordinator.swift
 //  Vocabulary
 //
 //  Created by bongzniak on 2023/01/20.
@@ -18,16 +18,16 @@ protocol BaseVocabularyCoordinator: Coordinator {
 
 // TODO: 네이밍 고민...
 // Coordinator <-> Reactor
-protocol VocabularyCoordinatorDelegate: AnyObject {
+protocol VocabulariesCoordinatorDelegate: AnyObject {
     func selectedGroups(_ groups: [Group])
 }
 
-public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordinator {
+public final class VocabulariesCoordinator: BaseCoordinator, BaseVocabularyCoordinator {
     
     public weak var parentCoordinator: Coordinator?
     public var navigationController: UINavigationController
     
-    weak var delegate: VocabularyCoordinatorDelegate?
+    weak var delegate: VocabulariesCoordinatorDelegate?
     var rootNavigationController: UINavigationController
     
     // MARK: Initializer
@@ -40,7 +40,7 @@ public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordin
     }
     
     public func start() {
-        let viewController = VocabularyViewController.instance(coordinator: self)
+        let viewController = VocabulariesViewController.instance(coordinator: self)
         navigationController.pushViewController(viewController, animated: true)
     }
     
@@ -60,7 +60,7 @@ public final class VocabularyCoordinator: BaseCoordinator, BaseVocabularyCoordin
     }
 }
 
-extension VocabularyCoordinator: GroupCoordinatorDelegate {
+extension VocabulariesCoordinator: GroupCoordinatorDelegate {
     public func selectedGroups(_ groups: [Core.Group]) {
         delegate?.selectedGroups(groups)
     }

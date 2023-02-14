@@ -1,5 +1,5 @@
 //
-//  GroupView.swift
+//  GroupsView.swift
 //  Group
 //
 //  Created by bongzniak on 2023/02/08.
@@ -18,11 +18,11 @@ import Then
 
 import Core
 
-protocol GroupViewDelegate: AnyObject {
+protocol GroupsViewDelegate: AnyObject {
     func groupCellDidTap(id: String)
 }
 
-final class GroupView: BaseView {
+final class GroupsView: BaseView {
     
     typealias RxDataSource = RxCollectionViewSectionedReloadDataSource<GroupSection>
     
@@ -52,7 +52,7 @@ final class GroupView: BaseView {
     
     // MARK: Properties
     
-    weak var delegate: GroupViewDelegate?
+    weak var delegate: GroupsViewDelegate?
 
     var dataSource: RxDataSource!
     let sections = PublishRelay<[GroupSection]>()
@@ -154,7 +154,7 @@ final class GroupView: BaseView {
     }
 }
 
-extension GroupView {
+extension GroupsView {
     private func dataSourceFactory() -> RxDataSource {
         RxDataSource(
             configureCell: { [weak self]
@@ -180,7 +180,7 @@ extension GroupView {
 
 // MARK: UICollectionViewDelegateFlowLayout
 
-extension GroupView: UICollectionViewDelegateFlowLayout {
+extension GroupsView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -208,8 +208,8 @@ extension GroupView: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension GroupView {
-    class func instance() -> GroupView {
-        GroupView()
+extension GroupsView {
+    class func instance() -> GroupsView {
+        GroupsView()
     } 
 }

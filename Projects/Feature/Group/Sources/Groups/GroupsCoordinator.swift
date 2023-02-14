@@ -1,5 +1,5 @@
 //
-//  GroupCoordinator.swift
+//  GroupsCoordinator.swift
 //  Group
 //
 //  Created by bongzniak on 2023/02/08.
@@ -11,7 +11,7 @@ import UIKit
 
 import Core
 
-protocol BsaeGroupCoordinator: Coordinator {
+protocol BsaeGroupsCoordinator: Coordinator {
     func close()
     func presentCreateGroup(
         title: String,
@@ -23,15 +23,15 @@ protocol BsaeGroupCoordinator: Coordinator {
 }
 
 // Coordinator <-> Coordinator
-public protocol GroupCoordinatorDelegate: AnyObject {
+public protocol GroupsCoordinatorDelegate: AnyObject {
     func selectedGroups(_ groups: [Group])
 }
 
-public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
+public final class GroupsCoordinator: BaseCoordinator, BsaeGroupsCoordinator {
     
     public weak var parentCoordinator: Coordinator?
     
-    public weak var delegate: GroupCoordinatorDelegate?
+    public weak var delegate: GroupsCoordinatorDelegate?
     
     public var navigationController: UINavigationController
     
@@ -42,7 +42,7 @@ public final class GroupCoordinator: BaseCoordinator, BsaeGroupCoordinator {
     }
     
     public func start() {
-        let viewController = GroupViewController.instance(
+        let viewController = GroupsViewController.instance(
             coordinator: self,
             selectMode: .single,
             selectedIDs: []

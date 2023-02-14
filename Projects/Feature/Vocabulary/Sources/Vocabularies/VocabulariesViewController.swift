@@ -1,5 +1,5 @@
 //
-//  VocabularyViewController.swift
+//  VocabulariesViewController.swift
 //  Vocabulary
 //
 //  Created by bongzniak on 2023/01/20.
@@ -14,21 +14,21 @@ import RxSwift
 
 import Core
 
-final class VocabularyViewController: BaseViewController, View {
+final class VocabulariesViewController: BaseViewController, View {
     
-    typealias Reactor = VocabularyViewReactor
+    typealias Reactor = VocabulariesViewReactor
     
     // MARK: Properties
     
     // MARK: UI
     
-    let bodyView: VocabularyView
+    let bodyView: VocabulariesView
     
     // MARK: Initializing
     
     init(
         reactor: Reactor,
-        bodyView: VocabularyView
+        bodyView: VocabulariesView
     ) {
         defer {
             self.reactor = reactor
@@ -132,16 +132,16 @@ final class VocabularyViewController: BaseViewController, View {
 
 // MARK: VocabularyViewController
 
-extension VocabularyViewController {
-    class func instance(coordinator: VocabularyCoordinator) -> VocabularyViewController {
-        VocabularyViewController(
-            reactor: VocabularyViewReactor(
+extension VocabulariesViewController {
+    class func instance(coordinator: VocabulariesCoordinator) -> VocabulariesViewController {
+        VocabulariesViewController(
+            reactor: VocabulariesViewReactor(
                 coordinator: coordinator,
                 vocabularyService: VocabularyCoreDataService(
                     repository: VocabularyCoreDataRepository(coreDataManager: CoreDataManager.shared)
                 )
             ),
-            bodyView: VocabularyView.instance()
+            bodyView: VocabulariesView.instance()
         )
     }
 }

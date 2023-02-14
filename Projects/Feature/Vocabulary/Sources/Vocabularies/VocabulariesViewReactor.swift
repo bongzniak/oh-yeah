@@ -1,5 +1,5 @@
 //
-//  VocabularyViewReactor.swift
+//  VocabulariesViewReactor.swift
 //  Vocabulary
 //
 //  Created by bongzniak on 2023/01/20.
@@ -12,7 +12,7 @@ import RxSwift
 
 import Core
 
-final class VocabularyViewReactor: BaseReactor, Reactor {
+final class VocabulariesViewReactor: BaseReactor, Reactor {
     
     enum Action {
         case fetch(Group?)
@@ -38,7 +38,7 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     
     let initialState: State
     
-    private let coordinator: VocabularyCoordinator
+    private let coordinator: VocabulariesCoordinator
     private let vocabularyService: VocabularyServiceType
     
     private var vocabularies: [Vocabulary] = []
@@ -46,7 +46,7 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     // MARK: Initializing
     
     init(
-        coordinator: VocabularyCoordinator,
+        coordinator: VocabulariesCoordinator,
         vocabularyService: VocabularyServiceType
     ) {
         self.coordinator = coordinator
@@ -122,7 +122,7 @@ final class VocabularyViewReactor: BaseReactor, Reactor {
     }
 }
 
-extension VocabularyViewReactor {
+extension VocabulariesViewReactor {
     private func fetchVocabularies(with group: Group? = nil) -> Observable<Mutation> {
         vocabularyService.fetchVocabularies(
             with: VocabularyFetchPredicate(group: group)
@@ -145,7 +145,7 @@ extension VocabularyViewReactor {
     }
 }
 
-extension VocabularyViewReactor: VocabularyCoordinatorDelegate {
+extension VocabulariesViewReactor: VocabulariesCoordinatorDelegate {
     func selectedGroups(_ groups: [Group]) {
         guard currentState.group != groups.first else { return }
         

@@ -24,7 +24,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationViewController
         window?.makeKeyAndVisible()
         
-        let coordinator = GroupCoordinator(navigationController: navigationViewController)
+        let coordinator = GroupsCoordinator(navigationController: navigationViewController)
         coordinator.start()
         
         return true

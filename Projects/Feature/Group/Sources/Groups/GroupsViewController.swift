@@ -1,5 +1,5 @@
 //
-//  GroupViewController.swift
+//  GroupsViewController.swift
 //  Group
 //
 //  Created by bongzniak on 2023/02/08.
@@ -15,9 +15,9 @@ import RxSwift
 import Core
 import DesignSystem
 
-final class GroupViewController: BaseViewController, View {
+final class GroupsViewController: BaseViewController, View {
     
-    typealias Reactor = GroupViewReactor
+    typealias Reactor = GroupsViewReactor
     
     // MARK: Properties
 
@@ -32,13 +32,13 @@ final class GroupViewController: BaseViewController, View {
     )
     let doneBarButton: UIBarButtonItem = UIBarButtonItem(systemItem: .done)
     
-    let bodyView: GroupView
+    let bodyView: GroupsView
     
     // MARK: Initializing
     
     init(
         reactor: Reactor,
-        bodyView: GroupView
+        bodyView: GroupsView
     ) {
         defer {
             self.reactor = reactor
@@ -155,21 +155,21 @@ final class GroupViewController: BaseViewController, View {
 
 // MARK: GroupViewDelegate
 
-extension GroupViewController: GroupViewDelegate {
+extension GroupsViewController: GroupsViewDelegate {
     func groupCellDidTap(id: String) {
         reactor?.action.onNext(.clickGroup(id: id))
     }
 }
 
 
-extension GroupViewController {
+extension GroupsViewController {
     class func instance(
-        coordinator: GroupCoordinator,
+        coordinator: GroupsCoordinator,
         selectMode: SelectMode,
         selectedIDs: Set<String>
-    ) -> GroupViewController {
-        GroupViewController(
-            reactor: GroupViewReactor(
+    ) -> GroupsViewController {
+        GroupsViewController(
+            reactor: GroupsViewReactor(
                 coordinator: coordinator,
                 groupService: GroupCoreDataService(
                     repository: GroupCoreDataRepository(coreDataManager: CoreDataManager.shared)
@@ -177,7 +177,7 @@ extension GroupViewController {
                 selectMode: selectMode,
                 selectedIDs: selectedIDs
             ),
-            bodyView: GroupView.instance()
+            bodyView: GroupsView.instance()
         )
     }
 }

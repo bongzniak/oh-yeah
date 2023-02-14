@@ -1,5 +1,5 @@
 //
-//  GroupViewReactor.swift
+//  GroupsViewReactor.swift
 //  Group
 //
 //  Created by bongzniak on 2023/02/08.
@@ -12,7 +12,7 @@ import RxSwift
 
 import Core
 
-final class GroupViewReactor: BaseReactor, Reactor {
+final class GroupsViewReactor: BaseReactor, Reactor {
     
     enum Action {
         case fetch(keyword: String)
@@ -42,7 +42,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
         @Pulse var isRefreshing: Bool = false
     }
     
-    private let coordinator: GroupCoordinator
+    private let coordinator: GroupsCoordinator
     private let groupService: GroupServiceType
     
     private var groups: [Group] = []
@@ -55,7 +55,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
     // MARK: Initializing
     
     init(
-        coordinator: GroupCoordinator,
+        coordinator: GroupsCoordinator,
         groupService: GroupServiceType,
         selectMode: SelectMode,
         selectedIDs: Set<String>
@@ -145,7 +145,7 @@ final class GroupViewReactor: BaseReactor, Reactor {
     }
 }
 
-extension GroupViewReactor {
+extension GroupsViewReactor {
     private func fetchGroups(keyword: String) -> Observable<Mutation> {
         var predicate: GroupFetchPredicate?
         
