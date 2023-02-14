@@ -23,7 +23,7 @@ let project = Project.frameworkWithDemoApp(
     infoPlist: infoPlist,
     dependencies: [
         .project(target: "Core", path: .relativeToRoot("Projects/Core")),
-        .project(target: "DesignSystem", path: .relativeToRoot("Projects/UI/DesignSystem")),
+        .project(target: "DesignSystem", path: .relativeToRoot("Projects/DesignSystem")),
         .project(target: "Group", path: .relativeToRoot("Projects/Feature/Group")),
         .external(name: "ReactorKit"),
         .external(name: "RxSwift"),
