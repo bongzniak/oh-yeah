@@ -31,7 +31,9 @@ open class BaseViewController: UIViewController, BaseViewControllerProtocol {
     public var safeAreaInsets: UIEdgeInsets {
         get {
             if #available(iOS 11.0, *) {
-                guard let window = UIApplication.shared.windows.first else {
+                let scenes = UIApplication.shared.connectedScenes
+                guard let windowScene = scenes.first as? UIWindowScene,
+                      let window = windowScene.windows.first else {
                     return self.view.safeAreaInsets
                 }
                 return window.safeAreaInsets
