@@ -98,18 +98,20 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
         }
     }
 
+    // MARK: Transform
+    
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let events = Vocabulary.event.flatMap { [weak self] event in
             self?.mutation(from: event) ?? .empty()
         }
-        return Observable.of(mutation, events).merge()
+        return Observable.merge(mutation, events)
     }
     
     func mutation(from event: Vocabulary.Event) -> Observable<Mutation> {
         switch event {
             case .save(let vocabulary):
-                guard currentState.group == nil
-                        || vocabulary.group == currentState.group else { return .empty() }
+                guard currentState.group == nil || vocabulary.group == currentState.group
+                else { return .empty() }
                 
                 return .just(.saveVocabulary(vocabulary))
         }
