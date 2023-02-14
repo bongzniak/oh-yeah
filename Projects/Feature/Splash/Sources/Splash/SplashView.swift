@@ -52,16 +52,24 @@ final class SplashView: BaseView {
     
     // MARK: - UI Setup
     
-    override func addViews() {
-        super.addViews()
+    override func setupProperty() {
+        super.setupProperty()
     }
     
-    override func setupViews() {
-        super.setupViews()
+    override func setupDelegate() {
+        super.setupDelegate()
     }
-
-    override func setupConstraints() {
-        super.setupConstraints()
+    
+    override func setupHierarchy() {
+        super.setupHierarchy()
+    }
+    
+    override func setupLayout() {
+        super.setupLayout()
+    }
+    
+    override func setupBind() {
+        super.setupBind()
     }
 }
 

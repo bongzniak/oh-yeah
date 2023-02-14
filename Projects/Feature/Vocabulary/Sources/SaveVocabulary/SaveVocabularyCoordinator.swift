@@ -51,7 +51,7 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     }
     
     public func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>) {
-        let coordinator = GroupCoordinator(navigationController: rootNavigationController)
+        let coordinator = GroupsCoordinator(navigationController: rootNavigationController)
         coordinator.parentCoordinator = self
         coordinator.delegate = self
         
@@ -59,7 +59,7 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     }
 }
 
-extension SaveVocabularyCoordinator: GroupCoordinatorDelegate {
+extension SaveVocabularyCoordinator: GroupsCoordinatorDelegate {
     public func selectedGroups(_ groups: [Group]) {
         delegate?.selectedGroups(groups)
     }

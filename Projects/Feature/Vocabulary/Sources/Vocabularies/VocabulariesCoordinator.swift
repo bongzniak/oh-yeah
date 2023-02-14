@@ -52,7 +52,7 @@ public final class VocabulariesCoordinator: BaseCoordinator, BaseVocabularyCoord
     }
     
     public func pushToGroup() {
-        let coordinator = GroupCoordinator(navigationController: navigationController)
+        let coordinator = GroupsCoordinator(navigationController: navigationController)
         coordinator.parentCoordinator = self
         coordinator.delegate = self
 
@@ -60,7 +60,7 @@ public final class VocabulariesCoordinator: BaseCoordinator, BaseVocabularyCoord
     }
 }
 
-extension VocabulariesCoordinator: GroupCoordinatorDelegate {
+extension VocabulariesCoordinator: GroupsCoordinatorDelegate {
     public func selectedGroups(_ groups: [Core.Group]) {
         delegate?.selectedGroups(groups)
     }
