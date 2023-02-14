@@ -8,7 +8,12 @@
 
 import Foundation
 
-public struct Vocabulary: Hashable, Equatable {
+public struct Vocabulary: ModelType, Equatable {
+    
+    public enum Event {
+        case save(Vocabulary)
+    }
+    
     public let id: String
     public let spelling: String
     public let description: String
