@@ -135,7 +135,7 @@ final class GroupsViewReactor: BaseReactor, Reactor {
                 state.isRefreshing = isRefreshing
                 
             case .appendGroup(let group):
-                groups.append(group)
+                groups.insert(group, at: 0)
                 state.sections = [generateSections()]
                 
             case .updateSections(let sections):

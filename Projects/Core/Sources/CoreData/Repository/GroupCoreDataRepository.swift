@@ -33,6 +33,7 @@ public class GroupCoreDataRepository: GroupRepositoryType {
             predicates.append(NSPredicate(format: "name CONTAINS %@", predicate.name))
         }
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
         
         do {
             fetchedResult = try coreDataManager.persistentContainer.viewContext.fetch(request)
