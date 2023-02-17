@@ -19,6 +19,7 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
         case refresh
         case shuffle
         case update(Vocabulary)
+        case edit(Vocabulary)
         case groupSelectButtonDidTap
         case plusActionButtonDidTap
     }
@@ -85,15 +86,19 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
                 if let index = vocabularies.firstIndex(where: { $0 == vocabulaty }) {
                     vocabularies[index] = vocabulaty
                 }
-                
+
                 return .just(.updateSections([generateVocabularySection()]))
                 
+            case .edit(let vocabulary):
+                coordinator.pushToSaveVocabulary(editMode: .update(vocabulary))
+                return .empty()
+                
             case .groupSelectButtonDidTap:
-                coordinator.pushToGroup()
+                coordinator.pushToGroups(with: currentState.group)
                 return .empty()
                 
             case .plusActionButtonDidTap:
-                coordinator.pushToSaveVocabulary()
+                coordinator.pushToSaveVocabulary(editMode: .create(currentState.group))
                 return .empty()
         }
     }
@@ -110,8 +115,10 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
     func mutation(from event: Vocabulary.Event) -> Observable<Mutation> {
         switch event {
             case .save(let vocabulary):
-                guard currentState.group == nil || vocabulary.group == currentState.group
-                else { return .empty() }
+                guard currentState.group == nil || (vocabulary.group == currentState.group)
+                else {
+                    return .empty()
+                }
                 
                 return .just(.saveVocabulary(vocabulary))
         }

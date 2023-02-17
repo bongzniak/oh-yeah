@@ -12,8 +12,8 @@ import Core
 import Group
 
 protocol BaseVocabularyCoordinator: Coordinator {
-    func pushToSaveVocabulary()
-    func pushToGroup()
+    func pushToSaveVocabulary(editMode: EditMode<Vocabulary>)
+    func pushToGroups(with selectedGroup: Group?)
 }
 
 // TODO: 네이밍 고민...
@@ -28,15 +28,11 @@ public final class VocabulariesCoordinator: BaseCoordinator, BaseVocabularyCoord
     public var navigationController: UINavigationController
     
     weak var delegate: VocabulariesCoordinatorDelegate?
-    var rootNavigationController: UINavigationController
     
     // MARK: Initializer
     
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-        
-        self.rootNavigationController = UINavigationController()
-        self.rootNavigationController.modalPresentationStyle = .fullScreen
     }
     
     public func start() {
@@ -44,15 +40,22 @@ public final class VocabulariesCoordinator: BaseCoordinator, BaseVocabularyCoord
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    public func pushToSaveVocabulary() {
-        let coordinator = SaveVocabularyCoordinator(navigationController: navigationController)
+    public func pushToSaveVocabulary(editMode: EditMode<Vocabulary>) {
+        let coordinator = SaveVocabularyCoordinator(
+            navigationController: navigationController,
+            editMode: editMode
+        )
         coordinator.parentCoordinator = self
         
         coordinator.start()
     }
     
-    public func pushToGroup() {
-        let coordinator = GroupsCoordinator(navigationController: navigationController)
+    public func pushToGroups(with selectedGroup: Group?) {
+        let coordinator = GroupsCoordinator(
+            navigationController: navigationController,
+            selectMode: .single,
+            selectedGroups: [selectedGroup].compactMap { $0 }
+        )
         coordinator.parentCoordinator = self
         coordinator.delegate = self
 

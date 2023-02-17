@@ -127,6 +127,14 @@ final class VocabulariesViewController: BaseViewController, View {
                 owner.reactor?.action.onNext(.update(vocabulary))
             }
             .disposed(by: cell.disposeBag)
+        
+        cell.rx.throttleLongPress
+            .asDriver(onErrorJustReturn: ())
+            .drive(with: self) { [weak cell] owner, _ in
+                guard let vocabulary = cell?.reactor?.currentState.vocabulary else { return }
+                owner.reactor?.action.onNext(.edit(vocabulary))
+            }
+            .disposed(by: cell.disposeBag)
     }
 }
 
