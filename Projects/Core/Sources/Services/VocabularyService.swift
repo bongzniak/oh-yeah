@@ -16,6 +16,7 @@ public protocol VocabularyServiceType {
         with predicate: VocabularyFetchPredicate?
     ) -> Observable<VocabularyResponse>
     func createVocabulary(_ request: VocabularyRequest) -> Observable<Vocabulary>
+    func updateVocabulary(_ request: VocabularyRequest) -> Observable<Vocabulary>
 }
 
 public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
@@ -45,6 +46,18 @@ public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
             guard let self = self else { return Disposables.create() }
             
             let response = self.repository.createVocabulary(request)
+            observer.onNext(response)
+            observer.onCompleted()
+            
+            return Disposables.create()
+        }
+    }
+    
+    public func updateVocabulary(_ request: VocabularyRequest) -> Observable<Vocabulary> {
+        return Observable<Vocabulary>.create { [weak self] observer in
+            guard let self = self else { return Disposables.create() }
+            
+            let response = self.repository.updateVocabulary(request)
             observer.onNext(response)
             observer.onCompleted()
             
