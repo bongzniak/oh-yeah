@@ -134,6 +134,11 @@ final class SaveVocabularyViewController: BaseViewController, View {
             .drive(bodyView.sectionTitleView.rx.subtitle)
             .disposed(by: disposeBag)
         
+        reactor.pulse(\.$autofocus)
+            .asDriver(onErrorJustReturn: false)
+            .drive(bodyView.spellingTextView.rx.autofocus)
+            .disposed(by: disposeBag)
+        
         reactor.pulse(\.$spelling)
             .asDriver(onErrorJustReturn: "")
             .drive(bodyView.spellingTextView.rx.text)

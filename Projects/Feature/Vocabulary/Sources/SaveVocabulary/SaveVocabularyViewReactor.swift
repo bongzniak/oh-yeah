@@ -37,6 +37,7 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
     struct State {
         @Pulse var group: Group?
         @Pulse var vocabularyID: String?
+        @Pulse var autofocus: Bool
         @Pulse var spelling: String
         @Pulse var description: String
         @Pulse var sentence: String
@@ -75,6 +76,7 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
         initialState = State(
             group: selectedGroup,
             vocabularyID: vocabulary?.id,
+            autofocus: true,
             spelling: vocabulary?.spelling ?? "",
             description: vocabulary?.description ?? "",
             sentence: vocabulary?.sentence ?? ""
@@ -134,6 +136,7 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                         state.spelling = ""
                         state.description = ""
                         state.sentence = ""
+                        state.autofocus = true
                         
                     case .update:
                         coordinator.close()
@@ -143,12 +146,15 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                 state.group = group
             
             case .updateSpelling(let spelling):
+                state.autofocus = false
                 state.spelling = spelling
                 
             case .updateDescription(let description):
+                state.autofocus = false
                 state.description = description
                 
             case .updateSentence(let sentence):
+                state.autofocus = false
                 state.sentence = sentence
         }
 
