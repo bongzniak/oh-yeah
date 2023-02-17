@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Group: Codable, Hashable {
+public struct Group: Codable, Hashable, Equatable {
     public let id: String
     public let name: String
     public let count: Int
@@ -25,5 +25,9 @@ public struct Group: Codable, Hashable {
         self.id = groupEntity.id
         self.name = groupEntity.name
         self.count = 0
+    }
+    
+    public static func == (lhs: Group, rhs: Group) -> Bool {
+        lhs.id == rhs.id
     }
 }
