@@ -47,6 +47,7 @@ final class GroupsViewReactor: BaseReactor, Reactor {
     
     private var groups: [Group] = []
     private let selectMode: SelectMode
+    private let selectedGroups: [Group]
     private var selectedIDs = Set<String>()
     private var keyword: String = ""
     
@@ -58,12 +59,13 @@ final class GroupsViewReactor: BaseReactor, Reactor {
         coordinator: GroupsCoordinator,
         groupService: GroupServiceType,
         selectMode: SelectMode,
-        selectedIDs: Set<String>
+        selectedGroups: [Group]
     ) {
         self.coordinator = coordinator
         self.groupService = groupService
         self.selectMode = selectMode
-        self.selectedIDs = selectedIDs
+        self.selectedGroups = selectedGroups
+        self.selectedIDs = Set(selectedGroups.compactMap { $0.id })
         
         initialState = State()
         
@@ -75,7 +77,6 @@ final class GroupsViewReactor: BaseReactor, Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
             case .fetch(let keyword):
-                selectedIDs = []
                 self.keyword = keyword
                 return fetchGroups(keyword: keyword)
                 

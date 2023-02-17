@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import RxCocoa
+import RxSwift
 
 import Core
 
@@ -34,18 +36,26 @@ public final class GroupsCoordinator: BaseCoordinator, BsaeGroupsCoordinator {
     public weak var delegate: GroupsCoordinatorDelegate?
     
     public var navigationController: UINavigationController
+    private let selectMode: SelectMode
+    private let selectedGroups: [Group]
     
     // MARK: Initializer
     
-    public init(navigationController: UINavigationController) {
+    public init(
+        navigationController: UINavigationController,
+        selectMode: SelectMode,
+        selectedGroups: [Group]
+    ) {
         self.navigationController = navigationController
+        self.selectMode = selectMode
+        self.selectedGroups = selectedGroups
     }
     
     public func start() {
         let viewController = GroupsViewController.instance(
             coordinator: self,
-            selectMode: .single,
-            selectedIDs: []
+            selectMode: selectMode,
+            selectedGroups: selectedGroups
         )
         
         navigationController.pushViewController(viewController, animated: true)

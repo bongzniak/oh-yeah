@@ -24,7 +24,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationViewController
         window?.makeKeyAndVisible()
         
-        let coordinator = GroupsCoordinator(navigationController: navigationViewController)
+        let coordinator = GroupsCoordinator(
+            navigationController: navigationViewController,
+            selectMode: .single,
+            selectedGroups: []
+        )
         coordinator.start()
         
         return true

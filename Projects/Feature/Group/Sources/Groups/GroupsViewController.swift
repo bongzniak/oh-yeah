@@ -166,7 +166,7 @@ extension GroupsViewController {
     class func instance(
         coordinator: GroupsCoordinator,
         selectMode: SelectMode,
-        selectedIDs: Set<String>
+        selectedGroups: [Group]
     ) -> GroupsViewController {
         GroupsViewController(
             reactor: GroupsViewReactor(
@@ -175,7 +175,7 @@ extension GroupsViewController {
                     repository: GroupCoreDataRepository(coreDataManager: CoreDataManager.shared)
                 ),
                 selectMode: selectMode,
-                selectedIDs: selectedIDs
+                selectedGroups: selectedGroups
             ),
             bodyView: GroupsView.instance()
         )
