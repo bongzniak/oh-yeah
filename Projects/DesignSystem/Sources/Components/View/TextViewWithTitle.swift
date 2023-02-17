@@ -151,6 +151,7 @@ public final class TextViewWithTitle: BaseView {
         textView.rx.text
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in
+                owner.textView.text = text
             }
             .disposed(by: disposeBag)
     }

@@ -43,7 +43,7 @@ public final class BaseTextView: UITextView {
         }
     }
     
-    public  override var text: String! {
+    public override var text: String! {
         didSet {
             self.placeholderLabel.isHidden = !text.isEmpty
         }
