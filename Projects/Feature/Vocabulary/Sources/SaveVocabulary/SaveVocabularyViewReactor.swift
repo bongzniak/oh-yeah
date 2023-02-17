@@ -47,18 +47,33 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
     private let coordinator: SaveVocabularyCoordinator
     private let vocabularyService: VocabularyServiceType
     
+    private let editMode: EditMode<Vocabulary>
+    
     // MARK: Initializing
     
     init(
         coordinator: SaveVocabularyCoordinator,
-        vocabulary: Vocabulary?,
-        vocabularyService: VocabularyServiceType
+        vocabularyService: VocabularyServiceType,
+        editMode: EditMode<Vocabulary>
     ) {
         self.coordinator = coordinator
         self.vocabularyService = vocabularyService
+        self.editMode = editMode
+        
+        var vocabulary: Vocabulary?
+        var selectedGroup: Group?
+        
+        switch editMode {
+            case .create(let group):
+                selectedGroup = group
+                
+            case .update(let item):
+                selectedGroup = item.group
+                vocabulary = item
+        }
         
         initialState = State(
-            group: vocabulary?.group,
+            group: selectedGroup,
             vocabularyID: vocabulary?.id,
             spelling: vocabulary?.spelling ?? "",
             description: vocabulary?.description ?? "",
@@ -95,7 +110,7 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
                 return .just(.updateSentence(sentence))
                 
             case .groupSelectButtonDidTap:
-                coordinator.pushToGroup(selectMode: .single, selectIDs: [])
+                coordinator.pushToGroup(with: currentState.group)
                 return .empty()
                 
             case .closeButtonDidTap:
@@ -111,13 +126,19 @@ final class SaveVocabularyViewReactor: BaseReactor, Reactor {
 
         switch mutation {
             case .saveComplete(let vocabulary):
-                state.vocabularyID = nil
-                state.spelling = ""
-                state.description = ""
-                state.sentence = ""
-                
                 Vocabulary.event.onNext(.save(vocabulary))
-            
+                
+                switch editMode {
+                    case .create:
+                        state.vocabularyID = nil
+                        state.spelling = ""
+                        state.description = ""
+                        state.sentence = ""
+                        
+                    case .update:
+                        coordinator.close()
+                }
+                
             case .updateGroup(let group):
                 state.group = group
             
@@ -139,7 +160,7 @@ extension SaveVocabularyViewReactor {
     private func save() -> Observable<Mutation> {
         guard let groupID = currentState.group?.id else { return .empty() }
         
-        let vocabularyEntity = VocabularyRequest(
+        let request = VocabularyRequest(
             groupID: groupID,
             vocabularyID: currentState.vocabularyID,
             spelling: currentState.spelling,
@@ -147,8 +168,17 @@ extension SaveVocabularyViewReactor {
             sentence: currentState.sentence
         )
         
-        return vocabularyService.createVocabulary(vocabularyEntity).map { vocabulary in
-                .saveComplete(vocabulary)
+        return saveVocabulary(request: request)
+            .map { .saveComplete($0) }
+    }
+    
+    private func saveVocabulary(request: VocabularyRequest) -> Observable<Vocabulary> {
+        switch editMode {
+            case .create:
+                return vocabularyService.createVocabulary(request)
+                
+            case .update:
+                return vocabularyService.updateVocabulary(request)
         }
     }
 }

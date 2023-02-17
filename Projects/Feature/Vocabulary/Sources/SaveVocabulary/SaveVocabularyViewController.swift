@@ -204,17 +204,17 @@ final class SaveVocabularyViewController: BaseViewController, View {
 extension SaveVocabularyViewController {
     class func instance(
         coordinator: SaveVocabularyCoordinator,
-        vocabulary: Vocabulary? = nil
+        editMode: EditMode<Vocabulary>
     ) -> SaveVocabularyViewController {
         SaveVocabularyViewController(
             reactor: SaveVocabularyViewReactor(
                 coordinator: coordinator,
-                vocabulary: vocabulary,
                 vocabularyService: VocabularyCoreDataService(
                     repository: VocabularyCoreDataRepository(
                         coreDataManager: CoreDataManager.shared
                     )
-                )
+                ),
+                editMode: editMode
             ),
             bodyView: SaveVocabularyView.instance()
         )

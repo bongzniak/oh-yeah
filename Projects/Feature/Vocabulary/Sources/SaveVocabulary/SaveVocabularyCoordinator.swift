@@ -14,7 +14,7 @@ import Group
 
 
 protocol BaseSaveVocabularyCoordinator: Coordinator {
-    func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>)
+    func pushToGroup(with selectedGroup: Group?)
     func close()
 }
 
@@ -31,17 +31,27 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     public weak var delegate: SaveVocabularyCoordinatorDelegate?
     var rootNavigationController: UINavigationController
     
+    private var editMode: EditMode<Vocabulary>
+    
     // MARK: Initializer
     
-    public init(navigationController: UINavigationController) {
+    public init(
+        navigationController: UINavigationController,
+        editMode: EditMode<Vocabulary>
+    ) {
         self.navigationController = navigationController
         
         self.rootNavigationController = UINavigationController()
         self.rootNavigationController.modalPresentationStyle = .fullScreen
+        
+        self.editMode = editMode
     }
     
     public func start() {
-        let viewController = SaveVocabularyViewController.instance(coordinator: self)
+        let viewController = SaveVocabularyViewController.instance(
+            coordinator: self,
+            editMode: editMode
+        )
         rootNavigationController.viewControllers = [viewController]
         navigationController.present(rootNavigationController, animated: true)
     }
@@ -50,8 +60,12 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
         navigationController.dismiss(animated: true)
     }
     
-    public func pushToGroup(selectMode: SelectMode, selectIDs: Set<String>) {
-        let coordinator = GroupsCoordinator(navigationController: rootNavigationController)
+    public func pushToGroup(with selectedGroup: Group?) {
+        let coordinator = GroupsCoordinator(
+            navigationController: rootNavigationController,
+            selectMode: .single,
+            selectedGroups: [selectedGroup].compactMap { $0 }
+        )
         coordinator.parentCoordinator = self
         coordinator.delegate = self
         
