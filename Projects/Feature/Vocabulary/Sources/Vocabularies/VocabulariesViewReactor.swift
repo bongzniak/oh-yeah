@@ -147,7 +147,7 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
                 if let index = vocabularies.firstIndex(where: { $0 == vocabulary }) {
                     self.vocabularies[index] = vocabulary
                 } else {
-                    self.vocabularies.append(vocabulary)
+                    self.vocabularies.insert(vocabulary, at: 0)
                 }
                 state.sections = [generateVocabularySection()]
         }

@@ -37,6 +37,7 @@ public class VocabularyCoreDataRepository: VocabularyRepositoryType {
 //            }
         }
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
         
         do {
             fetchedResult = try coreDataManager.persistentContainer.viewContext.fetch(request)
