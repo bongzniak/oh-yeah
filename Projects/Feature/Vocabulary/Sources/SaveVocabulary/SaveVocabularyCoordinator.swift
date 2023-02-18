@@ -28,8 +28,10 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     public weak var parentCoordinator: Coordinator?
     public var navigationController: UINavigationController
     
+    // TODO: deinit이 호출되지 않는 문제 임시 처리 - 방법 찾게되면 수정 예정
+    private var rootNavigationController: UINavigationController?
+    
     public weak var delegate: SaveVocabularyCoordinatorDelegate?
-    var rootNavigationController: UINavigationController
     
     private var editMode: EditMode<Vocabulary>
     
@@ -42,12 +44,14 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
         self.navigationController = navigationController
         
         self.rootNavigationController = UINavigationController()
-        self.rootNavigationController.modalPresentationStyle = .fullScreen
+        self.rootNavigationController?.modalPresentationStyle = .fullScreen
         
         self.editMode = editMode
     }
     
     public func start() {
+        guard let rootNavigationController else { return }
+        
         let viewController = SaveVocabularyViewController.instance(
             coordinator: self,
             editMode: editMode
@@ -57,10 +61,16 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     }
     
     public func close() {
-        navigationController.dismiss(animated: true)
+        guard let rootNavigationController else { return }
+        
+        rootNavigationController.dismiss(animated: true) { [weak self] in
+            self?.rootNavigationController = nil
+        }
     }
     
     public func pushToGroup(with selectedGroup: Group?) {
+        guard let rootNavigationController else { return }
+        
         let coordinator = GroupsCoordinator(
             navigationController: rootNavigationController,
             selectMode: .single,
