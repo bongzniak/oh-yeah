@@ -11,6 +11,7 @@ import UIKit
 import ReactorKit
 import RxCocoa
 import RxSwift
+import RxOptional
 
 import Core
 import Group
@@ -129,7 +130,8 @@ final class SaveVocabularyViewController: BaseViewController, View {
         .drive(saveBarButton.rx.isEnabled)
         .disposed(by: disposeBag)
         
-        reactor.state.map { $0.group?.name ?? "미지정 그룹" }
+        reactor.state.map { $0.group?.name }
+            .replaceNilWith("미지정 그룹")
             .asDriver(onErrorJustReturn: "")
             .drive(bodyView.sectionTitleView.rx.subtitle)
             .disposed(by: disposeBag)
@@ -158,36 +160,36 @@ final class SaveVocabularyViewController: BaseViewController, View {
     private func bindView(reactor: Reactor) {
         bodyView.spellingTextView.rx.text
             .distinctUntilChanged()
+            .filterNil()
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in
-                guard let text else { return }
                 owner.bodyView.searchSententButton.isEnabled = owner.isSearchButtonEnable(text)
             }
             .disposed(by: disposeBag)
         
         bodyView.spellingTextView.rx.text
             .distinctUntilChanged()
+            .filterNil()
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in
-                guard let text else { return }
                 owner.reactor?.action.onNext(.onChangedSpelling(text))
             }
             .disposed(by: disposeBag)
         
         bodyView.descriptionTextView.rx.text
             .distinctUntilChanged()
+            .filterNil()
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in
-                guard let text else { return }
                 owner.reactor?.action.onNext(.onChangedDescription(text))
             }
             .disposed(by: disposeBag)
         
         bodyView.sentenceTextView.rx.text
             .distinctUntilChanged()
+            .filterNil()
             .asDriver(onErrorJustReturn: "")
             .drive(with: self) { owner, text in
-                guard let text else { return }
                 owner.reactor?.action.onNext(.onChangedSentence(text))
             }
             .disposed(by: disposeBag)

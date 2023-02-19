@@ -29,6 +29,7 @@ let project = Project.frameworkWithDemoApp(
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),
         .external(name: "RxDataSources"),
+        .external(name: "RxOptional"),
         .external(name: "SnapKit"),
         .external(name: "Then"),
         .external(name: "Reusable"),
