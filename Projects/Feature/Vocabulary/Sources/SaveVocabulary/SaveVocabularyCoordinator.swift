@@ -29,7 +29,7 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     public var navigationController: UINavigationController
     
     // TODO: deinit이 호출되지 않는 문제 임시 처리 - 방법 찾게되면 수정 예정
-    private var rootNavigationController: UINavigationController?
+    private var presentNavigationController: UINavigationController?
     
     public weak var delegate: SaveVocabularyCoordinatorDelegate?
     
@@ -43,36 +43,34 @@ public final class SaveVocabularyCoordinator: BaseCoordinator, BaseSaveVocabular
     ) {
         self.navigationController = navigationController
         
-        self.rootNavigationController = UINavigationController()
-        self.rootNavigationController?.modalPresentationStyle = .fullScreen
+        self.presentNavigationController = UINavigationController()
+        self.presentNavigationController?.modalPresentationStyle = .fullScreen
         
         self.editMode = editMode
     }
     
     public func start() {
-        guard let rootNavigationController else { return }
+        guard let presentNavigationController else { return }
         
         let viewController = SaveVocabularyViewController.instance(
             coordinator: self,
             editMode: editMode
         )
-        rootNavigationController.viewControllers = [viewController]
-        navigationController.present(rootNavigationController, animated: true)
+        presentNavigationController.viewControllers = [viewController]
+        navigationController.present(presentNavigationController, animated: true)
     }
     
     public func close() {
-        guard let rootNavigationController else { return }
-        
-        rootNavigationController.dismiss(animated: true) { [weak self] in
-            self?.rootNavigationController = nil
+        presentNavigationController?.dismiss(animated: true) { [weak self] in
+            self?.presentNavigationController = nil
         }
     }
     
     public func pushToGroup(with selectedGroup: Group?) {
-        guard let rootNavigationController else { return }
+        guard let presentNavigationController else { return }
         
         let coordinator = GroupsCoordinator(
-            navigationController: rootNavigationController,
+            navigationController: presentNavigationController,
             selectMode: .single,
             selectedGroups: [selectedGroup].compactMap { $0 }
         )
