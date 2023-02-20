@@ -17,6 +17,7 @@ public protocol VocabularyServiceType {
     ) -> Observable<VocabularyResponse>
     func createVocabulary(_ request: VocabularyRequest) -> Observable<Vocabulary>
     func updateVocabulary(_ request: VocabularyRequest) -> Observable<Vocabulary>
+    func deleteVocabulary(_ id: String) -> Observable<Bool>
 }
 
 public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
@@ -59,6 +60,18 @@ public final class VocabularyCoreDataService: NSObject, VocabularyServiceType {
             
             let response = self.repository.updateVocabulary(request)
             observer.onNext(response)
+            observer.onCompleted()
+            
+            return Disposables.create()
+        }
+    }
+    
+    public func deleteVocabulary(_ id: String) -> Observable<Bool> {
+        return Observable<Bool>.create { [weak self] observer in
+            guard let self = self else { return Disposables.create() }
+            
+            let response = self.repository.deleteVocabulary(id)
+            observer.onNext(true)
             observer.onCompleted()
             
             return Disposables.create()

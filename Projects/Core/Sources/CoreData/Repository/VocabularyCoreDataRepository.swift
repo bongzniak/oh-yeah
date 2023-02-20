@@ -13,6 +13,7 @@ public protocol VocabularyRepositoryType {
     func fetchVocabularies(with predicate: VocabularyFetchPredicate?) -> VocabularyResponse
     func createVocabulary(_ request: VocabularyRequest) -> Vocabulary
     func updateVocabulary(_ request: VocabularyRequest) -> Vocabulary
+    func deleteVocabulary(_ id: String) -> Bool
 }
 
 public class VocabularyCoreDataRepository: VocabularyRepositoryType {
@@ -108,6 +109,20 @@ public class VocabularyCoreDataRepository: VocabularyRepositoryType {
         )
     }
     
+    public func deleteVocabulary(_ id: String) -> Bool {
+        let vocabularyEntity = fetchVocabulary(id)
+        
+        coreDataManager.persistentContainer.viewContext.delete(vocabularyEntity)
+        
+        coreDataManager.saveContext()
+        
+        return true
+    }
+}
+
+// Private func
+
+extension VocabularyCoreDataRepository {
     private func fetchVocabulary(_ id: String) -> VocabulayEntity {
         let request: NSFetchRequest<VocabulayEntity> = VocabulayEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id = %@", id)
