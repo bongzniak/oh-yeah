@@ -19,6 +19,7 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
         case refresh
         case shuffle
         case update(Vocabulary)
+        case delete(String)
         case edit(Vocabulary)
         case groupSelectButtonDidTap
         case plusActionButtonDidTap
@@ -70,7 +71,7 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
                     fetchVocabularies(with: group),
                     .just(.updateGroup(group))
                 ])
-            
+                
             case .refresh:
                 return .concat([
                     .just(.setRefreshing(true)),
@@ -86,11 +87,19 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
                 if let index = vocabularies.firstIndex(where: { $0 == vocabulaty }) {
                     vocabularies[index] = vocabulaty
                 }
-
                 return .just(.updateSections([generateVocabularySection()]))
                 
+            case .delete(let id):
+                return deleteVocabulary(id)
+                
             case .edit(let vocabulary):
-                coordinator.pushToSaveVocabulary(editMode: .update(vocabulary))
+                coordinator.presentEditVocabulary(
+                    title: "단어 편집"
+                ) { [weak self] in
+                    self?.coordinator.pushToSaveVocabulary(editMode: .update(vocabulary))
+                } deleteAction: { [weak self] in
+                    self?.action.onNext(.delete(vocabulary.id))
+                }
                 return .empty()
                 
             case .groupSelectButtonDidTap:
@@ -158,12 +167,19 @@ final class VocabulariesViewReactor: BaseReactor, Reactor {
 
 extension VocabulariesViewReactor {
     private func fetchVocabularies(with group: Group? = nil) -> Observable<Mutation> {
-        vocabularyService.fetchVocabularies(
-            with: VocabularyFetchPredicate(group: group)
-        )
+        vocabularyService.fetchVocabularies(with: VocabularyFetchPredicate(group: group))
             .map {
                 .updateVocabularies($0)
             }
+    }
+    
+    private func deleteVocabulary(_ id: String) -> Observable<Mutation> {
+        vocabularyService.deleteVocabulary(id).map { [weak self] isSuccess  in
+            guard let self = self, isSuccess else { return .updateSections([]) }
+            
+            self.vocabularies.removeAll(where: { $0.id == id })
+            return .updateSections([self.generateVocabularySection()])
+        }
     }
     
     private func generateVocabularySection() -> VocabularySection {

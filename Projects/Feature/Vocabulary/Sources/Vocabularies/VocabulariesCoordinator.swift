@@ -61,6 +61,33 @@ public final class VocabulariesCoordinator: BaseCoordinator, BaseVocabularyCoord
 
         coordinator.start()
     }
+    
+    public func presentEditVocabulary(
+        title: String,
+        editAction: @escaping () -> Void,
+        deleteAction: @escaping () -> Void
+    ) {
+        let alertController = UIAlertController(
+            title: title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        alertController.addAction(
+            UIAlertAction(title: "Edit", style: .default) { _ in
+                editAction()
+            }
+        )
+        alertController.addAction(
+            UIAlertAction(title: "Delete", style: .destructive) { _ in
+                deleteAction()
+            }
+        )
+        alertController.addAction(
+            UIAlertAction(title: "Cancel", style: .cancel)
+        )
+        
+        navigationController.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension VocabulariesCoordinator: GroupsCoordinatorDelegate {
