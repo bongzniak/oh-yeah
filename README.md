@@ -3,11 +3,10 @@
 
 ## 기술 스펙
 * Tuist + ReactorKit + Snapkit + CoreData
-* iCloud 동기화?
+* Coordinator pattenr을 활용한 화면 전환
 
 ## 영어 단어 암기
 * 영어 단어를 등록하고 테스트를 볼 수 있도록 한다.
-* 일별 간단한 영어 문장과 함께 + 오늘의 단어 10개씩 제공
 
 ## 개발 기능
 - [x] 단어 등록
