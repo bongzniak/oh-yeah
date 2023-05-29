@@ -1,0 +1,40 @@
+PODS:
+  - BNBBackground (1.6.1):
+    - BNBEffectPlayer (= 1.6.1)
+    - BNBScripting (= 1.6.1)
+    - BNBSdkCore (= 1.6.1)
+  - BNBEffectPlayer (1.6.1)
+  - BNBFaceTracker (1.6.1):
+    - BNBEffectPlayer (= 1.6.1)
+    - BNBScripting (= 1.6.1)
+    - BNBSdkCore (= 1.6.1)
+  - BNBScripting (1.6.1)
+  - BNBSdkApi (1.6.1):
+    - BNBSdkCore (= 1.6.1)
+  - BNBSdkCore (1.6.1)
+
+DEPENDENCIES:
+  - BNBBackground (> 1)
+  - BNBFaceTracker (> 1)
+  - BNBSdkApi (> 1)
+
+SPEC REPOS:
+  https://github.com/sdk-banuba/banuba-sdk-podspecs.git:
+    - BNBBackground
+    - BNBEffectPlayer
+    - BNBFaceTracker
+    - BNBScripting
+    - BNBSdkApi
+    - BNBSdkCore
+
+SPEC CHECKSUMS:
+  BNBBackground: aa71a98cb8eaf232d764db35ce8f18ceddd1fae8
+  BNBEffectPlayer: cdaef16f98fd61d6de05bb68e6b787e3f1843074
+  BNBFaceTracker: 1dd43168df9c30d3242ffa69f352096f063c8356
+  BNBScripting: 7c1b62992a6cadcf3d80d39985556d284de87295
+  BNBSdkApi: 293bc35b4d8afcca4195a404b0b5b2b97640aaad
+  BNBSdkCore: 14a093d041f0ddbb30a7af0e14906e84e1b6d434
+
+PODFILE CHECKSUM: 5dab0136e43ce4ab41d8fdb9edd4d6d4c11664e3
+
+COCOAPODS: 1.12.1

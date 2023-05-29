@@ -110,7 +110,7 @@ private extension Project {
             resources: [],
             dependencies: [.target(name: name)]
         )
-        return [sources, tests]
+        return [sources]
     }
     
     static func makeAppTargets(
@@ -144,7 +144,7 @@ private extension Project {
             dependencies: [
                 .target(name: "\(name)")
             ])
-        return [mainTarget, testTarget]
+        return [mainTarget]
     }
     
     static func makeAppTargets(
@@ -178,7 +178,7 @@ private extension Project {
             dependencies: [
                 .target(name: "\(name)")
             ])
-        return [mainTarget, testTarget]
+        return [mainTarget]
     }
 }
 

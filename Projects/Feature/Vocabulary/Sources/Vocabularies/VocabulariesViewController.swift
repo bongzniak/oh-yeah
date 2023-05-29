@@ -13,6 +13,7 @@ import RxCocoa
 import RxSwift
 
 import Core
+import Cocoapods
 
 final class VocabulariesViewController: BaseViewController, View {
     
@@ -51,6 +52,8 @@ final class VocabulariesViewController: BaseViewController, View {
         super.loadView()
 
         view = bodyView
+        
+        let sdkManager = BanubaSdkManager()
     }
     
     override func viewDidLoad() {

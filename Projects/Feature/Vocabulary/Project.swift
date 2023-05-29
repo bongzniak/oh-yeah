@@ -25,6 +25,7 @@ let project = Project.frameworkWithDemoApp(
         .project(target: "Core", path: .relativeToRoot("Projects/Core")),
         .project(target: "DesignSystem", path: .relativeToRoot("Projects/DesignSystem")),
         .project(target: "Group", path: .relativeToRoot("Projects/Feature/Group")),
+        .project(target: "Cocoapods", path: .relativeToRoot("Projects/Cocoapods")),
         .external(name: "ReactorKit"),
         .external(name: "RxSwift"),
         .external(name: "RxCocoa"),
